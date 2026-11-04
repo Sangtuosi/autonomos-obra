@@ -53,6 +53,8 @@ button.w{width:100%}button.s{padding:8px 14px;font-size:14px;border-radius:11px}
 .tabs button i{font-style:normal;font-size:19px}.tabs button.on{background:var(--or);color:#fff}
 .bar{height:10px;border-radius:9px;background:#f4e7da;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:repeating-linear-gradient(-45deg,var(--or) 0 10px,var(--or2) 10px 20px);border-radius:9px;transition:width .5s}
 .todo{font-size:14px;color:var(--mu);display:flex;flex-wrap:wrap;gap:6px 14px}.todo .d{color:var(--ok);font-weight:700}
+.stripw{position:relative}.cnt{position:absolute;right:10px;bottom:10px;background:#1b1f2acc;color:#fff;border-radius:99px;padding:4px 12px;font-size:13px;font-weight:700;pointer-events:none}
+.cmp{display:grid;grid-template-columns:1.4fr .7fr 1fr 24px;gap:6px;align-items:center;padding:7px 0;border-top:1px solid var(--line);font-size:14px}.cmp.h{border:0;color:var(--mu);font-size:12px;font-weight:700}.cmp b{color:var(--or)}.cmp i{font-style:normal;font-weight:800}
 .card h4{font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--mu);margin:12px 0 5px}
 .rate{display:flex;justify-content:space-between;align-items:center;background:var(--soft);border:1.5px solid var(--or);border-radius:14px;padding:10px 14px;margin:6px 0 8px}.rate span{color:var(--mu);font-size:14px;font-weight:600}.rate b{color:var(--or);font-size:20px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
@@ -107,7 +109,7 @@ const KINDS=['Constructora','Empresa de reformas','Promotora','Instalaciones','A
 const $=s=>document.querySelector(s),app=$('#app');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const opts=(l,sel)=>l.map(t=>`<option ${t===sel?'selected':''}>${esc(t)}</option>`).join('');
-const stars=n=>n?`<span class="st">${'★'.repeat(Math.round(n))}${'☆'.repeat(5-Math.round(n))}</span> <b>${n.toFixed(1)}</b>`:'<span class="mu">Sin valoraciones todavía</span>';
+const stars=n=>n?`<span class="mu">Valoración de empresas:</span> <span class="st">${'★'.repeat(Math.round(n))}${'☆'.repeat(5-Math.round(n))}</span> <b>${n.toFixed(1)}</b>`:'<span class="mu">Valoración de empresas: todavía ninguna</span>';
 const chips=(list,sel)=>`<div class="chips">`+list.map(t=>`<span class="chip ${sel.includes(t)?'on':''}" data-v="${esc(t)}">${esc(t)}</span>`).join('')+`</div>`;
 const picked=el=>[...el.querySelectorAll('.chip.on')].map(c=>c.dataset.v);
 const yn=(id,v)=>`<div id="${id}">${chips(['Sí','No'],[v?'Sí':'No'])}</div>`;
@@ -198,11 +200,12 @@ function progress(items){const d=items.filter(i=>i[1]).length,p=Math.round(d/ite
 const progA=()=>progress([['3 fotos o más',(S.me.photos||[]).length>=3],['Oficio',!!S.me.trade],['Qué sabes hacer',(S.me.skills||[]).length>0],['Presentación',(S.me.bio||'').length>20],['Teléfono',!!S.phone]]);
 const progE=()=>progress([['Nombre',!!S.me.name],['A quién buscas',(S.me.looking_for||[]).length>0],['Trabajo que ofreces',(S.me.job||'').length>10],['REA',!!S.me.rea],['Teléfono',!!S.phone]]);
 const thumb=p=>{const u=(p.photos||[])[0];return `<div class="im">${u?`<img src="${esc(u)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:14px" onerror="this.replaceWith('🛠')">`:'🛠'}</div>`};
+function phCnt(el){const i=Math.min(el.children.length-1,Math.round(el.scrollLeft/(el.clientWidth*.88+6))),c=el.parentNode.querySelector('.cnt');if(c)c.textContent='📷 '+(i+1)+' / '+el.children.length+(i<el.children.length-1?' ›':'')}
 async function enrich(list){if(!list.length)return list;const rv=(await sb.from('reviews').select('autonomo_id,stars').in('autonomo_id',list.map(p=>p.id))).data||[];
   list.forEach(p=>{const r=rv.filter(x=>x.autonomo_id===p.id);p.avg=r.length?r.reduce((a,x)=>a+x.stars,0)/r.length:0;p.n=r.length});return list}
-const badges=p=>[p.registered&&'De alta',p.insured&&'Con seguro',p.tpc&&'Tarjeta TPC',p.prl&&'Curso PRL',p.vehicle&&p.vehicle!=='Sin vehículo'&&p.vehicle,p.tools&&p.tools!=='No tengo'&&('Herramienta '+p.tools.toLowerCase())].filter(Boolean).map(t=>`<span class="tag b">${esc(t)}</span>`).join('');
+const badges=p=>{const l=[p.registered&&'Alta de autónomo',p.insured&&'Seguro de responsabilidad civil',p.tpc&&'Tarjeta Profesional de la Construcción',p.prl&&'Curso PRL',p.vehicle&&p.vehicle!=='Sin vehículo'&&'Vehículo: '+p.vehicle.toLowerCase(),p.tools&&p.tools!=='No tengo'&&'Herramienta '+p.tools.toLowerCase()].filter(Boolean);return l.length?`<h4>Documentación y medios</h4>`+l.map(t=>`<span class="tag b">✓ ${esc(t)}</span>`).join(''):''};
 function cardIn(p,strip){const ph=p.photos||[];
-  return (strip?(ph.length?`<div class="strip ${ph.length===1?'one':''}">${ph.map(u=>`<img src="${esc(u)}" alt="">`).join('')}</div>`:`<div class="ph" style="flex-direction:column;font-size:15px;color:var(--mu)"><span style="font-size:54px">🛠</span>Sin fotos todavía</div>`):'')+
+  return (strip?(ph.length?`<div class="stripw"><div class="strip ${ph.length===1?'one':''}" onscroll="phCnt(this)">${ph.map(u=>`<img src="${esc(u)}" alt="">`).join('')}</div>${ph.length>1?`<div class="cnt">📷 1 / ${ph.length} ›</div>`:''}</div>`:`<div class="ph" style="flex-direction:column;font-size:15px;color:var(--mu)"><span style="font-size:54px">🛠</span>Sin fotos todavía</div>`):'')+
   `<div class="in"><h2 style="margin-bottom:6px">${esc(p.name)}</h2><span class="tag">${esc(p.trade)}</span><span class="tag">${esc(p.zone)}</span><span class="tag">${p.years||0} años</span>
   <div class="rate"><span>💶 Tarifa</span><b>${p.rate?esc(/^\d+([.,]\d+)?$/.test(p.rate.trim())?p.rate.trim()+' €/hora':p.rate):'A convenir'}</b></div>
   <p style="margin:2px 0 6px">${stars(p.avg)}${p.n?` <span class="mu">(${p.n})</span>`:''}</p>${badges(p)}
@@ -338,12 +341,23 @@ async function avisos(){
   $('#v').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>ans(b.dataset.a,'accepted'));
   $('#v').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>ans(b.dataset.d,'declined'));
 }
+function cmpBox(list){
+  const me=S.me,n=list.length,avg=f=>list.reduce((a,p)=>a+f(p),0)/n,pct=f=>Math.round(list.filter(f).length/n*100);
+  const num=r=>{const m=String(r||'').match(/\d+([.,]\d+)?/);return m?parseFloat(m[0].replace(',','.')):0};
+  const rates=list.map(p=>num(p.rate)).filter(Boolean),mr=num(me.rate);
+  const ph=avg(p=>(p.photos||[]).length),yr=avg(p=>p.years||0);
+  const rows=[['Fotos',(me.photos||[]).length,ph.toFixed(1),(me.photos||[]).length>=ph],['Años de experiencia',me.years||0,yr.toFixed(1),(me.years||0)>=yr]];
+  [['Alta de autónomo','registered'],['Seguro','insured'],['Tarjeta TPC','tpc'],['Curso PRL','prl']].forEach(([l,k])=>{const o=pct(p=>p[k]);rows.push([l,me[k]?'Sí':'No',o+'%',!!me[k]||o<50])});
+  if(rates.length)rows.push(['Tarifa',mr?mr+' €':'–',(rates.reduce((a,x)=>a+x,0)/rates.length).toFixed(0)+' €',null]);
+  const bad=rows.find(r=>r[3]===false);
+  const tip=bad?{'Fotos':'Sube más fotos de obras terminadas: es lo que más mira la empresa.','Años de experiencia':'Cuenta en tu presentación todo lo que has hecho, aunque tengas menos años.','Alta de autónomo':'Si estás de alta, márcalo: muchos de tu oficio ya lo ponen.','Seguro':'Un seguro de responsabilidad civil te diferencia de la mayoría.','Tarjeta TPC':'La Tarjeta Profesional de la Construcción da confianza a las empresas.','Curso PRL':'El curso de prevención de riesgos es muy pedido en obra.'}[bad[0]]:'Vas por delante de la media. Mantén tu perfil al día y pide valoraciones.';
+  return `<div class="box or"><h3>Comparado contigo</h3><p class="mu">Con ${n} perfil${n>1?'es':''} de tu oficio.</p><div class="cmp h"><span></span><span>Tú</span><span>Resto</span><span></span></div>${rows.map(r=>`<div class="cmp"><span>${r[0]}</span><b>${r[1]}</b><span>${r[2]}</span><i style="color:${r[3]===null?'#999':r[3]?'var(--ok)':'var(--no)'}">${r[3]===null?'':r[3]?'✓':'↑'}</i></div>`).join('')}<p style="margin-top:10px;font-weight:600">💡 ${tip}</p></div>`}
 async function companeros(){
   const {data=[]}=await sb.from('profiles').select('*').eq('trade',S.me.trade).neq('id',S.user.id).limit(40);
-  const list=await enrich(data);const ph=data.length?data.reduce((a,p)=>a+(p.photos||[]).length,0)/data.length:0;
+  const list=await enrich(data);
   let h=`<h2>Compañeros de ${esc(S.me.trade.toLowerCase())}</h2>`;
   if(!list.length)h+=`<div class="box or"><h3>Aún no hay más perfiles de tu oficio</h3><p class="mu">Invita a compañeros a unirse. Cuantos más perfiles, más empresas vendrán.</p></div>`;
-  else h+=`<div class="box or"><h3>Comparado contigo</h3><p class="mu">Los perfiles de tu oficio tienen de media ${ph.toFixed(1)} fotos. Tú tienes ${(S.me.photos||[]).length}.</p></div>`;
+  else h+=cmpBox(list);
   h+=list.map((p,i)=>`<div class="box"><div class="li">${thumb(p)}<div><b>${esc(p.name)}</b><br><span class="mu">${esc(p.zone)} · ${p.years||0} años · ${(p.photos||[]).length} fotos</span><br>${stars(p.avg)}</div><button class="g s" data-o="${i}">Ver</button></div></div>`).join('');
   $('#v').innerHTML=h;
   $('#v').querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{const o=modal(`<div class="card">${cardIn(list[+b.dataset.o],true)}</div><button class="g" id="x" style="margin-top:12px">Cerrar</button>`,'l');$('#x').onclick=()=>o.remove()});
