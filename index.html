@@ -11,16 +11,18 @@
 :root{--or:#ff6a00;--or2:#ff8f3d;--ink:#1b1f2a;--mu:#667085;--bg:#fff;--soft:#fff4ea;--line:#f1e1d1;--ok:#16a34a;--no:#dc2626}
 *{box-sizing:border-box;margin:0}
 body{background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,sans-serif;min-height:100dvh}
-#app{max-width:560px;margin:auto;padding:0 16px 96px}
+#app{max-width:560px;margin:auto;padding:0 16px 40px}
 .stripes{height:14px;background:repeating-linear-gradient(-45deg,var(--or) 0 14px,#fff 14px 28px);margin:0 -16px}
-.top{display:flex;align-items:center;gap:10px;padding:14px 0}
-.top img{width:38px}.top b{font-size:20px;letter-spacing:-.3px}.top b span{color:var(--or)}
+.top{display:flex;align-items:center;gap:10px;padding:12px 0}
+.top img{width:36px}.top b{font-size:20px;letter-spacing:-.3px;flex:1}.top b span{color:var(--or)}
+.gear{background:#fff;color:var(--ink);border:1.5px solid #e6d9cc;padding:8px 12px;font-size:18px;line-height:1}
 h1{font-size:34px;line-height:1.1;letter-spacing:-1px;margin:6px 0 10px}h1 em{font-style:normal;color:var(--or)}
 h2{font-size:20px;margin:0 0 10px;letter-spacing:-.3px}h3{font-size:16px;margin-bottom:4px}
 p.lead{font-size:18px;color:var(--mu);margin-bottom:16px}
 @keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes wob{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
 @keyframes pop{0%{transform:scale(.8);opacity:0}100%{transform:none;opacity:1}}
+@keyframes draw{to{stroke-dashoffset:0}}
 .up{animation:up .5s both}
 .hero{display:flex;gap:10px;align-items:center}
 .hero svg{width:96px;flex:none;animation:wob 3.5s ease-in-out infinite;transform-origin:50% 90%}
@@ -39,40 +41,47 @@ button{font:inherit;border:0;border-radius:14px;padding:13px 18px;color:#fff;fon
 button:hover{background:#f05f00;box-shadow:0 6px 18px #ff6a0040}button:active{transform:scale(.96)}
 button.g{background:#fff;color:var(--ink);border:1.5px solid #e6d9cc}button.g:hover{background:var(--soft);box-shadow:none}
 button.ok{background:var(--ok)}button.no{background:#fff;color:var(--no);border:1.5px solid #f3c2c2}
-button.w{width:100%}
+button.w{width:100%}button.s{padding:8px 14px;font-size:14px;border-radius:11px}
 .row{display:flex;gap:10px}.row>*{flex:1}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{padding:8px 14px;border-radius:99px;border:1.5px solid #e6d9cc;background:#fff;cursor:pointer;font-size:14px;font-weight:600;user-select:none;transition:all .15s}
 .chip.on{background:var(--or);border-color:var(--or);color:#fff;animation:pop .2s}
 .tag{display:inline-block;padding:3px 10px;border-radius:99px;background:var(--soft);color:#c2410c;font-size:13px;font-weight:600;margin:0 6px 6px 0}
 .tag.b{background:#e8f7ee;color:#15803d}
-.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:6px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:#fffffff2;backdrop-filter:blur(10px);border-top:1px solid var(--line)}
-.tabs button{flex:1;max-width:150px;background:#fff;color:var(--mu);border:1.5px solid transparent;padding:11px 8px;font-size:14px}
-.tabs button.on{background:var(--or);color:#fff}
+.tabs{position:sticky;top:0;z-index:20;display:flex;gap:4px;margin:0 -16px 14px;padding:8px 10px;background:#fffffff5;backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.tabs button{flex:1;background:#fff;color:var(--mu);padding:7px 2px;font-size:12px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:1px;box-shadow:none}
+.tabs button i{font-style:normal;font-size:19px}.tabs button.on{background:var(--or);color:#fff}
 .bar{height:10px;border-radius:9px;background:#f4e7da;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:repeating-linear-gradient(-45deg,var(--or) 0 10px,var(--or2) 10px 20px);border-radius:9px;transition:width .5s}
 .todo{font-size:14px;color:var(--mu);display:flex;flex-wrap:wrap;gap:6px 14px}.todo .d{color:var(--ok);font-weight:700}
-.deck{position:relative;height:590px;margin:10px 0 14px}
-.card{position:absolute;inset:0;background:#fff;border:1px solid var(--line);border-radius:24px;overflow:hidden;touch-action:pan-y;user-select:none;box-shadow:0 14px 40px #1b1f2a1f}
-.card .ph{height:52%;background:#fff4ea center/cover;position:relative;display:flex;align-items:center;justify-content:center;font-size:54px}
-.card .dots{position:absolute;top:10px;left:0;right:0;display:flex;gap:4px;padding:0 12px}.dots i{flex:1;height:4px;border-radius:4px;background:#ffffffaa}.dots i.on{background:#fff}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 6px;text-align:center;animation:up .4s both}.stat b{display:block;font-size:26px;color:var(--or);line-height:1.1}.stat span{font-size:12px;color:var(--mu)}
+.deck{position:relative;height:600px;margin:10px 0 14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:0 14px 40px #1b1f2a1f}
+.deck .card{position:absolute;inset:0;touch-action:pan-y;user-select:none}
+.card .ph{height:300px;background:#fff4ea center/cover;position:relative;display:flex;align-items:center;justify-content:center;font-size:54px}
+.card .dots{position:absolute;top:10px;left:0;right:0;display:flex;gap:4px;padding:0 12px}.dots i{flex:1;height:4px;border-radius:4px;background:#ffffff88}.dots i.on{background:#fff}
 .card .in{padding:14px 16px}
+.strip{display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x mandatory;height:230px;background:var(--soft)}.strip img{height:100%;scroll-snap-align:start;flex:none;max-width:92%;object-fit:cover}
 .stamp{position:absolute;top:24px;font-size:26px;font-weight:900;border:4px solid;border-radius:12px;padding:2px 12px;opacity:0;background:#fffc}
 .stamp.l{left:18px;color:var(--ok);transform:rotate(-12deg)}.stamp.n{right:18px;color:var(--no);transform:rotate(12deg)}
 .thumbs{display:flex;gap:8px;flex-wrap:wrap}.thumbs div{position:relative}
 .thumbs img{width:84px;height:84px;object-fit:cover;border-radius:12px}
 .thumbs b{position:absolute;top:3px;right:3px;background:#000a;color:#fff;border-radius:99px;width:22px;height:22px;text-align:center;cursor:pointer;font-size:14px;line-height:22px}
 .add{width:84px;height:84px;border:2px dashed var(--or);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--or);font-size:30px;cursor:pointer;background:var(--soft)}
+.li{display:flex;gap:12px;align-items:center}.li .im{width:64px;height:64px;border-radius:14px;background:var(--soft) center/cover;flex:none;display:flex;align-items:center;justify-content:center;font-size:26px}.li>div:nth-child(2){flex:1;min-width:0}
 .mu{color:var(--mu);font-size:14px}.st{color:#f59e0b}
 .msg{padding:11px 13px;border-radius:12px;background:#1b1f2a;color:#fff;margin:10px 0;font-size:14px;animation:up .3s both}
 .steps{counter-reset:s}.steps li{list-style:none;position:relative;padding:4px 0 12px 46px}
 .steps li:before{counter-increment:s;content:counter(s);position:absolute;left:0;top:0;width:34px;height:34px;border-radius:50%;background:var(--or);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
 .sample{pointer-events:none;transform:rotate(-2deg);max-width:300px;margin:6px auto 0}
 .sample .ph{height:120px;background:linear-gradient(135deg,#ffd9bd,#ffb27a);display:flex;align-items:center;justify-content:center;font-size:46px}
-.sample .card{position:relative;inset:auto;height:auto;box-shadow:0 14px 34px #ff6a0033}
 small.f{display:block;text-align:center;color:var(--mu);font-size:12px;margin:18px 0}
 a{color:#c2410c}
-.pro{display:flex;gap:8px;flex-wrap:wrap}
-.tg{display:flex;align-items:center;gap:10px;padding:10px 0;font-weight:600;font-size:15px}.tg input{width:22px;height:22px;accent-color:var(--or)}
+.ov{position:fixed;inset:0;background:#1b1f2acc;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;animation:pop .25s both}
+.md{background:#fff;border-radius:26px;padding:26px 22px;max-width:380px;width:100%;text-align:center;max-height:92dvh;overflow:auto}
+.md.l{text-align:left;padding:14px}
+.md svg{width:84px;height:84px;margin-bottom:6px}.md svg circle{fill:#e8f7ee}.md svg path{fill:none;stroke:var(--ok);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60;stroke-dashoffset:60;animation:draw .5s .2s forwards}
+.md h2{font-size:24px}.md p{color:var(--mu);margin:4px 0 16px}.md button{width:100%;margin-top:8px}
 </style>
 </head>
 <body>
@@ -81,7 +90,17 @@ a{color:#c2410c}
 <script src="config.js"></script>
 <script>
 const TRADES=['Albañil','Pintor','Fontanero','Electricista','Pladur','Alicatador','Carpintero','Yesero','Encofrador','Peón'];
-const SKILLS={'Albañil':['Reformas','Tabiques','Obra nueva','Rehabilitación','Fachadas','Cubiertas'],'Pintor':['Interior','Exterior','Lacado','Estuco','Gotelé','Fachadas'],'Fontanero':['Baños','Cocinas','Calefacción','Gas','Saneamiento','Urgencias'],'Electricista':['Instalación','Boletín','Cuadros','Iluminación','Domótica','Urgencias'],'Pladur':['Tabiques','Techos','Aislamientos','Reformas'],'Alicatador':['Baños','Cocinas','Suelos','Microcemento'],'Carpintero':['Puertas','Armarios','Tarimas','Estructuras'],'Yesero':['Enlucidos','Guarnecidos','Techos'],'Encofrador':['Cimentación','Muros','Forjados'],'Peón':['Ayudante','Limpieza de obra','Carga y descarga','Demolición']};
+const SKILLS={
+'Albañil':['Reformas integrales','Tabiques','Obra nueva','Rehabilitación','Fachadas','Cubiertas y tejados','Cimentación','Muros de carga','Soleras y hormigón','Enfoscados','Aislamientos','Demoliciones','Albañilería de piedra','Reparación de humedades','Pavimentos exteriores','Piscinas'],
+'Pintor':['Interior','Exterior','Lacado','Estuco veneciano','Gotelé y alisado','Fachadas','Papel pintado','Barnizado','Pintura industrial','Impermeabilización','Pintura decorativa','Rejas y metal','Reparación de grietas'],
+'Fontanero':['Baños','Cocinas','Calefacción','Gas','Saneamiento','Urgencias 24h','Calderas','Suelo radiante','Aerotermia','Desatascos','Detección de fugas','Piscinas','Riego','Instalación de contadores'],
+'Electricista':['Instalación nueva','Boletín eléctrico','Cuadros eléctricos','Iluminación','Domótica','Urgencias 24h','Cargadores de coche eléctrico','Placas solares','Telecomunicaciones','Portero y videoportero','Industria','Reformas de vivienda','Aire acondicionado'],
+'Pladur':['Tabiques','Techos continuos','Techos registrables','Aislamientos acústicos','Trasdosados','Reformas','Cajones y molduras','Locales comerciales','Oficinas','Ignifugación'],
+'Alicatador':['Baños','Cocinas','Suelos','Microcemento','Gran formato','Mosaico','Piedra natural','Terrazas','Piscinas','Reparaciones','Cambio de bañera por plato'],
+'Carpintero':['Puertas','Armarios a medida','Tarimas y parquet','Estructuras de madera','Cocinas','Ventanas de madera','Pérgolas','Escaleras','Restauración','Muebles a medida','Ebanistería'],
+'Yesero':['Enlucidos','Guarnecidos','Techos','Molduras','Yeso proyectado','Reparaciones','Maestras','Fratasado'],
+'Encofrador':['Cimentación','Muros','Forjados','Pilares','Losas','Escaleras','Encofrado de vigas','Obra civil'],
+'Peón':['Ayudante de oficio','Limpieza de obra','Carga y descarga','Demolición','Acopio de material','Manejo de maquinaria','Andamios','Jardinería de obra']};
 const KINDS=['Constructora','Empresa de reformas','Promotora','Instalaciones','Administrador de fincas','Otro'];
 const $=s=>document.querySelector(s),app=$('#app');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -89,43 +108,63 @@ const opts=(l,sel)=>l.map(t=>`<option ${t===sel?'selected':''}>${esc(t)}</option
 const stars=n=>n?`<span class="st">${'★'.repeat(Math.round(n))}${'☆'.repeat(5-Math.round(n))}</span> <b>${n.toFixed(1)}</b>`:'<span class="mu">Sin valoraciones todavía</span>';
 const chips=(list,sel)=>`<div class="chips">`+list.map(t=>`<span class="chip ${sel.includes(t)?'on':''}" data-v="${esc(t)}">${esc(t)}</span>`).join('')+`</div>`;
 const picked=el=>[...el.querySelectorAll('.chip.on')].map(c=>c.dataset.v);
+const yn=(id,v)=>`<div id="${id}">${chips(['Sí','No'],[v?'Sí':'No'])}</div>`;
+const isY=id=>picked($('#'+id))[0]==='Sí';
 function bindChips(el,single,cb){el.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{if(single)el.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));c.classList.toggle('on',single?true:!c.classList.contains('on'));cb&&cb()})}
-let sb,S={user:null,role:null,me:null,tab:null},F={trade:'Todos',zone:''};
+function bindYN(...ids){ids.forEach(i=>bindChips($('#'+i),true))}
+let sb,S={user:null,role:null,me:null,tab:null},F={trade:'Todos',zone:'',view:'cards'};
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 const CONE=`<svg viewBox="0 0 100 120"><ellipse cx="50" cy="112" rx="44" ry="7" fill="#1b1f2a22"/><rect x="6" y="96" width="88" height="14" rx="4" fill="#1b1f2a"/><path d="M38 12h24l22 84H16z" fill="#ff6a00"/><path d="M33 34h34l4 15H29z M26 60h48l4 16H22z" fill="#fff"/><rect x="38" y="8" width="24" height="8" rx="4" fill="#ff8f3d"/></svg>`;
-const hdr=()=>`<div class="stripes"></div><div class="top"><img src="icon.svg" alt=""><b>Obra<span>Directa</span></b></div>`;
-function say(t){const m=document.createElement('div');m.className='msg';m.textContent=t;const v=$('#v')||app;v.prepend(m);window.scrollTo({top:0,behavior:'smooth'});setTimeout(()=>m.remove(),5000)}
+const hdr=(gear)=>`<div class="stripes"></div><div class="top"><img src="icon.svg" alt=""><b>Obra<span>Directa</span></b>${gear?'<button class="gear" id="gear" aria-label="Ajustes">⚙</button>':''}</div>`;
+function say(t){const m=document.createElement('div');m.className='msg';m.textContent=t;(S.user?$('#v'):app).prepend(m);window.scrollTo({top:0,behavior:'smooth'});setTimeout(()=>m.remove(),6000)}
+function modal(html,cls=''){const o=document.createElement('div');o.className='ov';o.innerHTML=`<div class="md ${cls}">${html}</div>`;o.onclick=e=>{if(e.target===o)o.remove()};document.body.append(o);return o}
+function saved(title,sub,btns){const o=modal(`<svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="38"/><path d="M22 41l12 12 25-27"/></svg><h2>${title}</h2><p>${sub}</p>${btns.map((b,i)=>`<button class="${i?'g':''}" data-i="${i}">${b[0]}</button>`).join('')}`);
+  o.querySelectorAll('button').forEach(x=>x.onclick=()=>{o.remove();btns[+x.dataset.i][1]()})}
 
 async function boot(){
-  if(!CFG.URL||!CFG.KEY){app.innerHTML=hdr()+`<div class="box"><h2>Falta configurar</h2><p class="mu">Rellena config.js con la URL y la clave pública.</p></div>`;return}
+  if(!CFG.URL||!CFG.KEY){app.innerHTML=hdr()+`<div class="box"><h2>Falta configurar</h2><p class="mu">Rellena config.js.</p></div>`;return}
   sb=supabase.createClient(CFG.URL,CFG.KEY);
   const {data:{session}}=await sb.auth.getSession();
+  if(session){S.user=session.user;await loadRole(true)}
+  const pid=new URLSearchParams(location.search).get('p');
+  if(pid)return publicView(pid);
   if(!session)return landing();
-  S.user=session.user;await loadRole();
+  go();
+}
+async function loadRole(quiet){
+  const id=S.user.id,md=S.user.user_metadata||{};
+  let {data:p}=await sb.from('profiles').select('*').eq('id',id).maybeSingle();
+  if(p){S.role='a';S.me=p;S.tab='inicio';return quiet||go()}
+  let {data:c}=await sb.from('companies').select('*').eq('id',id).maybeSingle();
+  if(c){S.role='e';S.me=c;S.tab='inicio';return quiet||go()}
+  if(md.role==='e'){const r=await sb.from('companies').insert({id,name:md.name||'Mi empresa'}).select().single();S.role='e';S.me=r.data}
+  else{const r=await sb.from('profiles').insert({id,name:md.name||'Autónomo'}).select().single();S.role='a';S.me=r.data}
+  S.tab='inicio';quiet||go();
 }
 function landing(){
+  history.replaceState(null,'',location.pathname);
   app.innerHTML=hdr()+`
   <div class="hero up"><div><h1>Autónomos de obra, <em>sin intermediarios</em></h1></div>${CONE}</div>
   <p class="lead up">La web donde las empresas de construcción encuentran autónomos de confianza en el Vallès, y los autónomos consiguen trabajo enseñando lo que saben hacer.</p>
   <div class="two r up">
-    <div class="who"><h2>🔨 Soy autónomo</h2><ul><li>Crea tu perfil con fotos de tus obras</li><li>Las empresas te encuentran y te avisan</li><li>Recibes valoraciones reales</li><li>Gratis, siempre</li></ul><button class="w" data-go="a">Crear mi perfil</button></div>
-    <div class="who"><h2>🏗 Soy empresa</h2><ul><li>Mira perfiles con fotos y valoraciones</li><li>Filtra por oficio y zona</li><li>Marca los que te gustan y llámalos</li><li>Empieza gratis</li></ul><button class="w" data-go="e">Buscar autónomos</button></div>
+    <div class="who"><h2>🔨 Soy autónomo</h2><ul><li>Crea tu perfil con fotos de tus obras</li><li>Las empresas te encuentran y te avisan</li><li>Mira trabajos y apúntate</li><li>Gratis, siempre</li></ul><button class="w" data-go="a">Crear mi perfil</button></div>
+    <div class="who"><h2>🏗 Soy empresa</h2><ul><li>Mira perfiles con fotos y valoraciones</li><li>Filtra por oficio y zona</li><li>Publica tu trabajo y recibe solicitudes</li><li>Empieza gratis</li></ul><button class="w" data-go="e">Buscar autónomos</button></div>
   </div>
   <h2 style="margin-top:26px">Cómo funciona</h2>
-  <ol class="steps box or"><li><b>El autónomo se registra</b><br><span class="mu">Sube fotos de sus trabajos y se crea un mini currículum en 3 minutos.</span></li><li><b>La empresa busca y marca</b><br><span class="mu">Ve tarjetas con fotos, oficio, valoraciones y disponibilidad. Marca las que le gustan.</span></li><li><b>Si hay interés, se conocen</b><br><span class="mu">El autónomo acepta y se enseñan los teléfonos. Después, la empresa lo valora.</span></li></ol>
-  <div class="sample"><div class="card"><div class="ph">🧱</div><div class="in"><span class="tag" style="background:#1b1f2a;color:#fff">EJEMPLO</span><h3>Carlos M.</h3><span class="tag">Albañil</span><span class="tag">Sabadell</span><span class="tag">12 años</span><p><span class="st">★★★★★</span> <b>4.8</b></p><span class="tag b">De alta</span><span class="tag b">Con seguro</span></div></div></div>
+  <ol class="steps box or"><li><b>El autónomo se registra</b><br><span class="mu">Sube fotos de sus trabajos y se crea un mini currículum en 3 minutos.</span></li><li><b>La empresa busca y marca</b><br><span class="mu">Ve tarjetas con fotos, oficio, valoraciones y disponibilidad. O el autónomo se apunta a sus trabajos.</span></li><li><b>Si hay interés, se conocen</b><br><span class="mu">Se enseñan los teléfonos. Después, la empresa lo valora.</span></li></ol>
+  <div class="sample"><div class="card"><div class="ph" style="height:120px;background:linear-gradient(135deg,#ffd9bd,#ffb27a)">🧱</div><div class="in"><span class="tag" style="background:#1b1f2a;color:#fff">EJEMPLO</span><h3>Carlos M.</h3><span class="tag">Albañil</span><span class="tag">Sabadell</span><span class="tag">12 años</span><p><span class="st">★★★★★</span> <b>4.8</b></p><span class="tag b">De alta</span><span class="tag b">Con seguro</span></div></div></div>
   <div class="box" style="margin-top:22px"><h3>¿Por qué esta web?</h3><p class="mu">Faltan miles de trabajadores en la construcción y hoy se contrata por WhatsApp y boca a boca. Aquí ves el trabajo real de cada profesional antes de llamar.</p></div>
   <button class="g w" data-go="in">Ya tengo cuenta</button>
   <small class="f">Obra Directa solo pone en contacto. La contratación y las condiciones son entre empresa y autónomo.</small>`;
   app.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>b.dataset.go==='in'?authView('in'):authView('up',b.dataset.go));
 }
 function authView(mode,role='a'){
-  app.innerHTML=hdr()+`<div class="box"><button class="g" id="bk" style="padding:8px 12px;margin-bottom:8px">← Volver</button><h2>${mode==='in'?'Entrar':role==='a'?'Crea tu perfil de autónomo':'Crea tu cuenta de empresa'}</h2>
+  app.innerHTML=hdr()+`<div class="box"><button class="g s" id="bk" style="margin-bottom:8px">← Volver</button><h2>${mode==='in'?'Entrar':role==='a'?'Crea tu perfil de autónomo':'Crea tu cuenta de empresa'}</h2>
   ${mode==='up'?`<div class="row" style="margin-bottom:4px"><button class="${role==='a'?'':'g'}" id="ra">Autónomo</button><button class="${role==='e'?'':'g'}" id="re">Empresa</button></div><label>${role==='a'?'Tu nombre':'Nombre de la empresa'}</label><input id="nm" placeholder="${role==='a'?'Ej: Carlos Martínez':'Ej: Reformas Vallès S.L.'}">`:''}
   <label>Correo</label><input id="em" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com">
   <label>Contraseña (mínimo 6)</label><input id="pw" type="password" autocomplete="${mode==='in'?'current-password':'new-password'}">
   <button class="w" id="go" style="margin-top:16px">${mode==='in'?'Entrar':'Crear cuenta'}</button>
-  <button class="g w" id="sw" style="margin-top:8px">${mode==='in'?'No tengo cuenta':'Ya tengo cuenta'}</button></div>`;
+  <button class="g w" id="sw" style="margin-top:8px;margin-bottom:0">${mode==='in'?'No tengo cuenta':'Ya tengo cuenta'}</button></div>`;
   $('#bk').onclick=landing;
   if(mode==='up'){$('#ra').onclick=()=>authView('up','a');$('#re').onclick=()=>authView('up','e')}
   $('#sw').onclick=()=>authView(mode==='in'?'up':'in',role);
@@ -138,125 +177,197 @@ function authView(mode,role='a'){
     S.user=r.data.user;loadRole();
   };
 }
-async function loadRole(){
-  const id=S.user.id,md=S.user.user_metadata||{};
-  let {data:p}=await sb.from('profiles').select('*').eq('id',id).maybeSingle();
-  if(p){S.role='a';S.me=p;S.tab='perfil';return nav()}
-  let {data:c}=await sb.from('companies').select('*').eq('id',id).maybeSingle();
-  if(c){S.role='e';S.me=c;S.tab='buscar';return nav()}
-  if(md.role==='e'){const r=await sb.from('companies').insert({id,name:md.name||'Mi empresa'}).select().single();S.role='e';S.me=r.data;S.tab='empresa'}
-  else{const r=await sb.from('profiles').insert({id,name:md.name||'Autónomo'}).select().single();S.role='a';S.me=r.data;S.tab='perfil'}
-  nav();
+const TABS={a:[['inicio','🏠','Inicio'],['perfil','👤','Mi perfil'],['trabajos','💼','Trabajos'],['avisos','🔔','Avisos'],['companeros','👥','Compañeros']],
+            e:[['inicio','🏠','Inicio'],['buscar','🔍','Buscar'],['contactos','🤝','Contactos'],['empresa','🏢','Empresa']]};
+const VIEWS={inicio:()=>S.role==='a'?inicioA():inicioE(),perfil:()=>perfil(),trabajos:()=>trabajos(),avisos:()=>avisos(),companeros:()=>companeros(),buscar:()=>buscar(),contactos:()=>contactos(),empresa:()=>empresa()};
+function go(tab){
+  if(tab)S.tab=tab;
+  app.innerHTML=hdr(true)+`<div class="tabs">${TABS[S.role].map(([k,i,n])=>`<button class="${S.tab===k?'on':''}" data-k="${k}"><i>${i}</i>${n}</button>`).join('')}</div><div id="v"></div>`;
+  app.querySelectorAll('.tabs [data-k]').forEach(b=>b.onclick=()=>go(b.dataset.k));
+  $('#gear').onclick=settings;window.scrollTo(0,0);VIEWS[S.tab]();
 }
-function nav(){
-  const t=S.role==='a'?[['perfil','Mi perfil'],['avisos','Avisos']]:[['buscar','Buscar'],['contactos','Contactos'],['empresa','Empresa']];
-  app.innerHTML=hdr()+'<div id="v"></div><div class="tabs">'+t.map(([k,n])=>`<button class="${S.tab===k?'on':''}" data-k="${k}">${n}</button>`).join('')+'<button id="out">Salir</button></div>';
-  app.querySelectorAll('.tabs [data-k]').forEach(b=>b.onclick=()=>{S.tab=b.dataset.k;nav()});
-  $('#out').onclick=async()=>{await sb.auth.signOut();S={user:null};landing()};
-  ({perfil,avisos,buscar,contactos,empresa})[S.tab]();
+function settings(){
+  const o=modal(`<h2>Ajustes</h2><p>Sesión iniciada como ${esc(S.user.email||'')}</p><button class="g" id="cl">Volver</button><button class="no" id="lo" style="margin-top:14px">Cerrar sesión</button>`);
+  $('#cl').onclick=()=>o.remove();$('#lo').onclick=async()=>{o.remove();await sb.auth.signOut();S={user:null};landing()};
 }
 async function getPhone(uid){const {data}=await sb.from('contacts').select('phone').eq('user_id',uid).maybeSingle();return data?.phone||''}
 function progress(items){const d=items.filter(i=>i[1]).length,p=Math.round(d/items.length*100);
-  return `<div class="box or"><h2>${p===100?'Perfil completo 🎉':'Completa tu perfil'}</h2><div class="bar"><i style="width:${p}%"></i></div><div class="todo">${items.map(i=>`<span class="${i[1]?'d':''}">${i[1]?'✓':'○'} ${i[0]}</span>`).join('')}</div></div>`}
-function toggles(list){return list.map(([id,t,v])=>`<label class="tg"><input type="checkbox" id="${id}" ${v?'checked':''}> ${t}</label>`).join('')}
+  return `<div class="box or"><h2>${p===100?'Perfil completo 🎉':'Completa tu perfil ('+p+'%)'}</h2><div class="bar"><i style="width:${p}%"></i></div><div class="todo">${items.map(i=>`<span class="${i[1]?'d':''}">${i[1]?'✓':'○'} ${i[0]}</span>`).join('')}</div></div>`}
+const progA=()=>progress([['3 fotos o más',(S.me.photos||[]).length>=3],['Oficio',!!S.me.trade],['Qué sabes hacer',(S.me.skills||[]).length>0],['Presentación',(S.me.bio||'').length>20],['Teléfono',!!S.phone]]);
+const progE=()=>progress([['Nombre',!!S.me.name],['A quién buscas',(S.me.looking_for||[]).length>0],['Trabajo que ofreces',(S.me.job||'').length>10],['REA',!!S.me.rea],['Teléfono',!!S.phone]]);
+async function enrich(list){if(!list.length)return list;const rv=(await sb.from('reviews').select('autonomo_id,stars').in('autonomo_id',list.map(p=>p.id))).data||[];
+  list.forEach(p=>{const r=rv.filter(x=>x.autonomo_id===p.id);p.avg=r.length?r.reduce((a,x)=>a+x.stars,0)/r.length:0;p.n=r.length});return list}
+const badges=p=>[p.registered&&'De alta',p.insured&&'Con seguro',p.tpc&&'Tarjeta TPC',p.prl&&'Curso PRL',p.vehicle&&p.vehicle!=='Sin vehículo'&&p.vehicle,p.tools&&p.tools!=='No tengo'&&('Herramienta '+p.tools.toLowerCase())].filter(Boolean).map(t=>`<span class="tag b">${esc(t)}</span>`).join('');
+function cardIn(p,strip){const ph=p.photos||[];
+  return (strip?(ph.length?`<div class="strip">${ph.map(u=>`<img src="${esc(u)}" alt="">`).join('')}</div>`:`<div class="ph">🛠</div>`):'')+
+  `<div class="in"><h2 style="margin-bottom:6px">${esc(p.name)}</h2><span class="tag">${esc(p.trade)}</span><span class="tag">${esc(p.zone)}</span><span class="tag">${p.years||0} años</span>${p.rate?`<span class="tag">${esc(p.rate)}</span>`:''}
+  <p style="margin:2px 0 6px">${stars(p.avg)}${p.n?` <span class="mu">(${p.n})</span>`:''}</p>${badges(p)}
+  <p class="mu" style="margin-top:4px">${esc([...(p.skills||[]),p.skills_extra].filter(Boolean).join(' · '))}</p>${p.bio?`<p style="margin-top:6px;font-size:14px">${esc(p.bio)}</p>`:''}${p.work_notes?`<p class="mu" style="margin-top:4px">${esc(p.work_notes)}</p>`:''}</div>`}
+async function preview(){const p={...S.me};await enrich([p]);
+  const o=modal(`<span class="tag" style="background:#1b1f2a;color:#fff">Así te ve una empresa</span><div class="card" style="margin-top:8px">${cardIn(p,true)}</div><button class="g" id="x" style="margin-top:12px">Cerrar</button>`,'l');$('#x').onclick=()=>o.remove()}
+function share(){const url=location.origin+location.pathname+'?p='+S.user.id,txt='Mira mi perfil de autónomo en Obra Directa';
+  if(navigator.share)navigator.share({title:'Obra Directa',text:txt,url}).catch(()=>{});
+  else{navigator.clipboard&&navigator.clipboard.writeText(url);modal(`<h2>Enlace copiado</h2><p>Pégalo en WhatsApp para enseñar tu perfil:</p><p style="word-break:break-all;color:var(--ink)">${esc(url)}</p><button onclick="this.closest('.ov').remove()">Vale</button>`)}}
+async function publicView(id){
+  const {data:p}=await sb.from('profiles').select('*').eq('id',id).maybeSingle();
+  app.innerHTML=hdr()+(p?`<div class="card">${cardIn((await enrich([p]))[0],true)}</div><div class="box or" style="margin-top:14px"><h3>¿Quieres contactar con ${esc(p.name.split(' ')[0])}?</h3><p class="mu" style="margin-bottom:10px">Crea una cuenta de empresa gratis y márcalo como interesante.</p><button class="w" id="c1">Crear cuenta de empresa</button></div>`:'<div class="box"><h2>Perfil no encontrado</h2></div>')+`<button class="g w" id="c2">Ir al inicio</button>`;
+  $('#c1')&&($('#c1').onclick=()=>{history.replaceState(null,'',location.pathname);authView('up','e')});
+  $('#c2').onclick=()=>{history.replaceState(null,'',location.pathname);S.user?go():landing()};
+}
+
+async function inicioA(){
+  const {data:ls=[]}=await sb.from('likes').select('*').eq('autonomo_id',S.user.id);
+  const inc=ls.filter(l=>!l.from_autonomo),acc=ls.filter(l=>l.status==='accepted').length;
+  const p={...S.me};await enrich([p]);S.phone=await getPhone(S.user.id);
+  const tips=[];if((S.me.photos||[]).length<3)tips.push('Sube al menos 3 fotos de obras terminadas. Es lo que más mira la empresa.');if(!S.phone)tips.push('Añade tu teléfono para poder hablar cuando acepten.');if((S.me.bio||'').length<20)tips.push('Escribe una presentación corta.');if(!S.me.tpc)tips.push('Si tienes la Tarjeta Profesional de la Construcción, márcalo: da mucha confianza.');
+  $('#v').innerHTML=`<h2>Hola, ${esc((S.me.name||'').split(' ')[0])} 👋</h2>
+  <div class="stats"><div class="stat"><b>${inc.length}</b><span>Empresas te han marcado</span></div><div class="stat"><b>${acc}</b><span>Contactos</span></div><div class="stat"><b>${p.n?p.avg.toFixed(1):'–'}</b><span>Valoración</span></div></div>
+  ${progA()}
+  ${tips.length?`<div class="box"><h3>Para que te contraten antes</h3>${tips.slice(0,3).map(t=>`<p class="mu" style="margin:6px 0">• ${esc(t)}</p>`).join('')}</div>`:''}
+  <div class="box"><h3>¿Qué quieres hacer?</h3><div style="display:grid;gap:8px;margin-top:8px"><button data-g="trabajos">💼 Ver trabajos de empresas</button><button class="g" id="pv">👁 Ver cómo me ve una empresa</button><button class="g" id="sh">📤 Compartir mi perfil por WhatsApp</button><button class="g" data-g="companeros">👥 Ver perfiles de compañeros</button></div></div>`;
+  $('#v').querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>go(b.dataset.g));$('#pv').onclick=preview;$('#sh').onclick=share;
+}
+async function inicioE(){
+  const [{count:disp},{data:ls=[]}]=await Promise.all([sb.from('profiles').select('id',{count:'exact',head:true}).eq('available',true),sb.from('likes').select('*').eq('company_id',S.user.id)]);
+  S.phone=await getPhone(S.user.id);
+  const sol=ls.filter(l=>l.from_autonomo&&l.status==='pending').length;
+  $('#v').innerHTML=`<h2>Hola, ${esc(S.me.name)} 👋</h2>
+  <div class="stats"><div class="stat"><b>${disp??0}</b><span>Autónomos disponibles</span></div><div class="stat"><b>${sol}</b><span>Solicitudes nuevas</span></div><div class="stat"><b>${ls.filter(l=>l.status==='accepted').length}</b><span>Contactos</span></div></div>
+  ${progE()}
+  <div class="box"><h3>¿Qué quieres hacer?</h3><div style="display:grid;gap:8px;margin-top:8px"><button data-g="buscar">🔍 Buscar autónomos</button>${sol?`<button data-g="contactos">📥 Ver ${sol} solicitudes</button>`:''}<button class="g" data-g="empresa">${(S.me.job||'').length>10?'✏️ Editar el trabajo que ofrezco':'📝 Publicar un trabajo'}</button><button class="g" id="pv">👁 Ver cómo me ve un autónomo</button></div></div>`;
+  $('#v').querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>go(b.dataset.g));$('#pv').onclick=()=>{const c=S.me;const o=modal(`<span class="tag" style="background:#1b1f2a;color:#fff">Así te ve un autónomo</span>${compHTML(c)}<button class="g" id="x">Cerrar</button>`,'l');$('#x').onclick=()=>o.remove()};
+}
+const compHTML=c=>`<div class="box" style="margin-top:8px"><h3>${esc(c.name)}</h3><span class="tag">${esc(c.kind||'Empresa')}</span>${c.zone?`<span class="tag">${esc(c.zone)}</span>`:''}${c.rea?`<span class="tag b">REA ${esc(c.rea)}</span>`:''}<p class="mu" style="margin:4px 0">${(c.looking_for||[]).length?'Busca: '+esc(c.looking_for.join(', ')):''}</p><p>${esc(c.job||'Todavía no ha publicado ningún trabajo.')}</p>${c.about?`<p class="mu" style="margin-top:6px">${esc(c.about)}</p>`:''}</div>`;
 
 async function perfil(){
-  const p=S.me,phone=await getPhone(S.user.id);S.phone=phone;
-  const prog=()=>progress([['Foto de tus trabajos',(S.me.photos||[]).length>=1],['Oficio',!!S.me.trade],['Qué sabes hacer',(S.me.skills||[]).length>0],['Presentación',(S.me.bio||'').length>20],['Teléfono',!!S.phone]]);
-  $('#v').innerHTML=`<div id="pg">${prog()}</div>
+  const p=S.me;S.phone=await getPhone(S.user.id);
+  $('#v').innerHTML=`<div id="pg">${progA()}</div>
   <div class="box"><h2>1. Quién eres</h2>
    <label>Nombre</label><input id="n" value="${esc(p.name)}" placeholder="Ej: Carlos Martínez">
    <label>Tu oficio principal</label><div id="tr">${chips(TRADES,[p.trade])}</div>
    <div class="row"><div><label>Años de experiencia</label><input id="y" type="number" min="0" max="60" value="${p.years||0}"></div><div><label>Zona de trabajo</label><input id="z" value="${esc(p.zone)}" placeholder="Ej: Sabadell, Terrassa"></div></div></div>
-  <div class="box"><h2>2. Qué sabes hacer</h2><p class="mu">Marca todo lo que haces.</p><div id="sk" style="margin-top:8px"></div></div>
+  <div class="box"><h2>2. Qué sabes hacer</h2><p class="mu">Marca todo lo que haces.</p><div id="sk" style="margin-top:8px"></div>
+   <label>¿Algo que no esté en la lista? Escríbelo</label><textarea id="sx" rows="2" maxlength="200" placeholder="Ej: Restauración de casas antiguas, trabajos en altura, lectura de planos...">${esc(p.skills_extra||'')}</textarea></div>
   <div class="box"><h2>3. Cómo trabajas</h2>
+   <label>Estoy dado de alta como autónomo</label>${yn('rg',p.registered)}
+   <label>Tengo seguro de responsabilidad civil</label>${yn('ins',p.insured)}
+   <label>Tengo la Tarjeta Profesional de la Construcción (TPC)</label>${yn('tpc',p.tpc)}
+   <label>Tengo el curso de prevención de riesgos (PRL)</label>${yn('prl',p.prl)}
+   <label>Vehículo</label><div id="vh">${chips(['Furgoneta','Coche','Sin vehículo'],[p.vehicle||''])}</div>
+   <label>Herramienta</label><div id="tl">${chips(['Propia completa','Parcial','No tengo'],[p.tools||''])}</div>
    <label>Tu tarifa orientativa</label><input id="r" value="${esc(p.rate||'')}" placeholder="Ej: 18 €/hora o 150 € al día">
-   ${toggles([['rg','Estoy dado de alta como autónomo',p.registered],['ins','Tengo seguro de responsabilidad civil',p.insured],['van','Tengo furgoneta',p.has_van],['tl','Llevo mi propia herramienta',p.own_tools],['av','Estoy disponible ahora',p.available]])}</div>
+   <label>Estoy disponible ahora</label>${yn('av',p.available)}
+   <label>¿Algo más que quieras decir de cómo trabajas?</label><textarea id="wn" rows="2" maxlength="250" placeholder="Ej: Me muevo por todo el Vallès. Puedo empezar el lunes. Trabajo solo o con un compañero.">${esc(p.work_notes||'')}</textarea></div>
   <div class="box"><h2>4. Preséntate</h2><textarea id="b" rows="4" maxlength="400" placeholder="Ej: 15 años en reformas de baños y cocinas. Trabajo limpio y puntual. Me incorporo en 48 horas.">${esc(p.bio)}</textarea></div>
   <div class="box"><h2>5. Fotos de tus trabajos</h2><p class="mu">Es lo que más mira la empresa. Sube al menos 3 de obras terminadas.</p><div class="thumbs" id="th" style="margin-top:10px"></div><input id="f" type="file" accept="image/*" multiple hidden></div>
-  <div class="box"><h2>6. Contacto</h2><label>Teléfono (solo lo ve quien tú aceptes)</label><input id="ph" type="tel" value="${esc(phone)}" placeholder="Ej: 600 123 456"></div>
+  <div class="box"><h2>6. Contacto</h2><label>Teléfono (solo lo ve quien tú aceptes)</label><input id="ph" type="tel" value="${esc(S.phone)}" placeholder="Ej: 600 123 456"></div>
   <button class="w" id="sv">Guardar mi perfil</button>`;
-  const drawSk=()=>{const t=picked($('#tr'))[0]||S.me.trade;$('#sk').innerHTML=chips(SKILLS[t]||[],S.me.skills||[]);bindChips($('#sk'))};
-  bindChips($('#tr'),true,drawSk);drawSk();
+  bindYN('rg','ins','tpc','prl','av');bindChips($('#vh'),true);bindChips($('#tl'),true);
+  const drawSk=()=>{const t=picked($('#tr'))[0]||S.me.trade;const cur=S.me.skills||[];$('#sk').innerHTML=chips(SKILLS[t]||[],cur);bindChips($('#sk'))};
+  bindChips($('#tr'),true,()=>{S.me.skills=[];drawSk()});drawSk();
   const draw=()=>{$('#th').innerHTML=(S.me.photos||[]).map((u,i)=>`<div><img src="${esc(u)}" alt=""><b data-i="${i}">×</b></div>`).join('')+'<div class="add" id="ad">+</div>';
     $('#ad').onclick=()=>$('#f').click();
-    $('#th').querySelectorAll('b').forEach(b=>b.onclick=async()=>{const ph=[...S.me.photos];const [u]=ph.splice(+b.dataset.i,1);const path=u.split('/fotos/')[1];if(path)await sb.storage.from('fotos').remove([path]);await sb.from('profiles').update({photos:ph}).eq('id',S.user.id);S.me.photos=ph;draw();$('#pg').innerHTML=prog()})};draw();
+    $('#th').querySelectorAll('b').forEach(b=>b.onclick=async()=>{const ph=[...S.me.photos];const [u]=ph.splice(+b.dataset.i,1);const path=u.split('/fotos/')[1];if(path)await sb.storage.from('fotos').remove([path]);await sb.from('profiles').update({photos:ph}).eq('id',S.user.id);S.me.photos=ph;draw();$('#pg').innerHTML=progA()})};draw();
   $('#f').onchange=async e=>{for(const f of e.target.files){
       if((S.me.photos||[]).length>=8){say('Máximo 8 fotos.');break}
       const blob=await shrink(f),path=`${S.user.id}/${Date.now()}.jpg`;
       const up=await sb.storage.from('fotos').upload(path,blob,{contentType:'image/jpeg'});if(up.error){say(up.error.message);continue}
       const url=sb.storage.from('fotos').getPublicUrl(path).data.publicUrl;const ph=[...(S.me.photos||[]),url];
-      await sb.from('profiles').update({photos:ph}).eq('id',S.user.id);S.me.photos=ph;draw();$('#pg').innerHTML=prog()}e.target.value=''};
+      await sb.from('profiles').update({photos:ph}).eq('id',S.user.id);S.me.photos=ph;draw();$('#pg').innerHTML=progA()}e.target.value=''};
   $('#sv').onclick=async()=>{
-    const row={name:$('#n').value.trim()||'Autónomo',trade:picked($('#tr'))[0]||'Albañil',zone:$('#z').value.trim()||'Vallès',years:+$('#y').value||0,bio:$('#b').value.trim(),skills:picked($('#sk')),rate:$('#r').value.trim(),registered:$('#rg').checked,insured:$('#ins').checked,has_van:$('#van').checked,own_tools:$('#tl').checked,available:$('#av').checked};
+    const row={name:$('#n').value.trim()||'Autónomo',trade:picked($('#tr'))[0]||'Albañil',zone:$('#z').value.trim()||'Vallès',years:+$('#y').value||0,bio:$('#b').value.trim(),skills:picked($('#sk')),skills_extra:$('#sx').value.trim(),rate:$('#r').value.trim(),registered:isY('rg'),insured:isY('ins'),tpc:isY('tpc'),prl:isY('prl'),vehicle:picked($('#vh'))[0]||'',tools:picked($('#tl'))[0]||'',work_notes:$('#wn').value.trim(),available:isY('av')};
     const a=await sb.from('profiles').update(row).eq('id',S.user.id);const tel=$('#ph').value.trim();
     const b=tel?await sb.from('contacts').upsert({user_id:S.user.id,phone:tel}):{};
-    if(a.error||b.error)return say((a.error||b.error).message+' (¿has ejecutado migracion-2.sql?)');
-    Object.assign(S.me,row);S.phone=tel;$('#pg').innerHTML=prog();say('Perfil guardado.')};
+    if(a.error||b.error)return say((a.error||b.error).message+' (¿has ejecutado migracion-3.sql?)');
+    Object.assign(S.me,row);S.phone=tel;$('#pg').innerHTML=progA();
+    saved('¡Perfil guardado!','Ya pueden verte las empresas. ¿Qué quieres hacer ahora?',[['Ver cómo me ve una empresa',preview],['Ver trabajos de empresas',()=>go('trabajos')],['Ir al inicio',()=>go('inicio')]])};
 }
 function shrink(file){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>{const k=Math.min(1,900/Math.max(i.width,i.height));const c=document.createElement('canvas');c.width=i.width*k;c.height=i.height*k;c.getContext('2d').drawImage(i,0,0,c.width,c.height);c.toBlob(b=>b?res(b):rej(),'image/jpeg',.75)};i.onerror=rej;i.src=URL.createObjectURL(file)})}
 
 async function empresa(){
-  const c=S.me,phone=await getPhone(S.user.id);S.phone=phone;
-  const prog=()=>progress([['Nombre',!!S.me.name],['Qué buscas',(S.me.looking_for||[]).length>0],['Trabajo que ofreces',(S.me.job||'').length>10],['REA',!!S.me.rea],['Teléfono',!!S.phone]]);
-  $('#v').innerHTML=`<div id="pg">${prog()}</div>
+  const c=S.me;S.phone=await getPhone(S.user.id);
+  $('#v').innerHTML=`<div id="pg">${progE()}</div>
   <div class="box"><h2>1. Tu empresa</h2><label>Nombre</label><input id="n" value="${esc(c.name)}" placeholder="Ej: Reformas Vallès S.L.">
    <label>Tipo de empresa</label><select id="k">${opts(KINDS,c.kind)}</select>
    <label>Zona donde trabajáis</label><input id="z" value="${esc(c.zone||'Vallès')}" placeholder="Ej: Vallès Occidental"></div>
   <div class="box"><h2>2. A quién buscas</h2><p class="mu">Marca los oficios que necesitas.</p><div id="lf" style="margin-top:8px">${chips(TRADES,c.looking_for||[])}</div></div>
-  <div class="box"><h2>3. Trabajo que ofreces</h2><p class="mu">Los autónomos lo verán al recibir tu aviso.</p><textarea id="j" rows="4" maxlength="400" placeholder="Ej: Reforma integral de piso en Sabadell. 3 semanas. Empezamos el día 15. Pago a 15 días.">${esc(c.job)}</textarea></div>
+  <div class="box"><h2>3. Trabajo que ofreces</h2><p class="mu">Los autónomos lo verán en el tablón de trabajos y en tu aviso.</p><textarea id="j" rows="4" maxlength="400" placeholder="Ej: Reforma integral de piso en Sabadell. 3 semanas. Empezamos el día 15. Pago a 15 días.">${esc(c.job)}</textarea></div>
   <div class="box"><h2>4. Sobre vosotros</h2><textarea id="ab" rows="3" maxlength="300" placeholder="Ej: 20 años en el sector. 12 trabajadores. Siempre pagamos a tiempo.">${esc(c.about)}</textarea></div>
   <div class="box"><h2>5. Confianza y contacto</h2><label>Número de REA (Registro de Empresas Acreditadas)</label><input id="r" value="${esc(c.rea)}" placeholder="Ej: 08/12345678">
-   <label>Teléfono (solo lo ven los autónomos que acepten)</label><input id="ph" type="tel" value="${esc(phone)}" placeholder="Ej: 93 123 45 67"></div>
+   <label>Teléfono (solo lo ven los autónomos que acepten)</label><input id="ph" type="tel" value="${esc(S.phone)}" placeholder="Ej: 93 123 45 67"></div>
   <button class="w" id="sv">Guardar mi empresa</button>
   <small class="f">Obra Directa solo pone en contacto. La contratación, el pago y las condiciones son entre empresa y autónomo.</small>`;
   bindChips($('#lf'));
   $('#sv').onclick=async()=>{const row={name:$('#n').value.trim()||'Mi empresa',kind:$('#k').value,zone:$('#z').value.trim()||'Vallès',looking_for:picked($('#lf')),job:$('#j').value.trim(),about:$('#ab').value.trim(),rea:$('#r').value.trim()};
     const a=await sb.from('companies').update(row).eq('id',S.user.id);const tel=$('#ph').value.trim();
     const b=tel?await sb.from('contacts').upsert({user_id:S.user.id,phone:tel}):{};
-    if(a.error||b.error)return say((a.error||b.error).message+' (¿has ejecutado migracion-2.sql?)');
-    Object.assign(S.me,row);S.phone=tel;$('#pg').innerHTML=prog();say('Empresa guardada.')};
+    if(a.error||b.error)return say((a.error||b.error).message+' (¿has ejecutado migracion-3.sql?)');
+    Object.assign(S.me,row);S.phone=tel;$('#pg').innerHTML=progE();
+    saved('¡Empresa guardada!','Ya pueden verte los autónomos. ¿Qué quieres hacer ahora?',[['Buscar autónomos',()=>go('buscar')],['Ver cómo me ve un autónomo',()=>{const o=modal(`<span class="tag" style="background:#1b1f2a;color:#fff">Así te ve un autónomo</span>${compHTML(S.me)}<button class="g" id="x">Cerrar</button>`,'l');$('#x').onclick=()=>o.remove()}],['Ir al inicio',()=>go('inicio')]])};
 }
 
+async function trabajos(){
+  const [{data:cs=[]},{data:mine=[]}]=await Promise.all([sb.from('companies').select('*').neq('job','').limit(60),sb.from('likes').select('*').eq('autonomo_id',S.user.id)]);
+  const st=Object.fromEntries(mine.map(l=>[l.company_id,l]));
+  cs.sort((a,b)=>((b.looking_for||[]).includes(S.me.trade)?1:0)-((a.looking_for||[]).includes(S.me.trade)?1:0));
+  let h='<h2>Trabajos de empresas</h2>';
+  if(!cs.length)h+=`<div class="box or"><h3>Todavía no hay trabajos publicados</h3><p class="mu">Las empresas irán publicando. Mientras, completa tu perfil y compártelo por WhatsApp con las empresas que conozcas.</p></div>`;
+  for(const c of cs){const l=st[c.id];
+    const btn=!l?`<button class="w" data-ap="${c.id}">Me interesa</button>`:l.status==='accepted'?'<span class="tag b">Aceptado: mira Avisos</span>':l.status==='declined'?'<span class="tag">No ha podido ser</span>':'<span class="tag b">Solicitud enviada</span>';
+    h+=`<div class="box">${compHTML(c).replace('class="box" style="margin-top:8px"','style="margin:0"')}${(c.looking_for||[]).includes(S.me.trade)?'<span class="tag b">Busca tu oficio</span>':''}<div style="margin-top:8px">${btn}</div></div>`}
+  $('#v').innerHTML=h;
+  $('#v').querySelectorAll('[data-ap]').forEach(b=>b.onclick=async()=>{const r=await sb.from('likes').insert({company_id:b.dataset.ap,autonomo_id:S.user.id,from_autonomo:true,job:''});if(r.error)return say(r.error.message+' (¿has ejecutado migracion-3.sql?)');trabajos()});
+}
 async function avisos(){
   const {data=[]}=await sb.from('likes').select('*, companies(name,rea,kind,zone,job)').eq('autonomo_id',S.user.id).order('created_at',{ascending:false});
-  let html='<h2 style="margin-top:8px">Empresas interesadas</h2>';
-  if(!data.length)html+=`<div class="box or"><h3>Todavía no hay avisos</h3><p class="mu">Cuando una empresa te marque, aparecerá aquí. Para que te encuentren antes: sube 3 fotos o más, marca lo que sabes hacer y pon que estás disponible.</p></div>`;
+  let html='<h2>Avisos</h2>';
+  if(!data.length)html+=`<div class="box or"><h3>Todavía no hay avisos</h3><p class="mu">Cuando una empresa te marque, aparecerá aquí. Para que te encuentren antes: sube 3 fotos o más, marca lo que sabes hacer y di que estás disponible. O apúntate tú a un trabajo en la pestaña Trabajos.</p></div>`;
   for(const l of data){const c=l.companies||{};let ex='';
-    if(l.status==='pending')ex=`<div class="row" style="margin-top:10px"><button class="ok" data-a="${l.company_id}">Aceptar</button><button class="no" data-d="${l.company_id}">Rechazar</button></div>`;
-    else if(l.status==='accepted'){const ph=await getPhone(l.company_id);ex=`<p style="margin-top:8px"><b>Teléfono:</b> ${ph?`<a href="tel:${esc(ph)}">${esc(ph)}</a>`:'<span class="mu">no lo ha puesto</span>'}</p>`}
-    else ex='<p class="mu" style="margin-top:6px">Rechazada</p>';
-    html+=`<div class="box"><h3>${esc(c.name)}</h3><span class="tag">${esc(c.kind||'Empresa')}</span>${c.zone?`<span class="tag">${esc(c.zone)}</span>`:''}${c.rea?`<span class="tag b">REA ${esc(c.rea)}</span>`:''}<p class="mu">${esc(c.job||'Te ha marcado como interesante.')}</p>${ex}</div>`}
+    if(l.from_autonomo)ex=l.status==='pending'?'<p class="mu" style="margin-top:6px">Has enviado tu solicitud. Esperando respuesta.</p>':l.status==='declined'?'<p class="mu">La empresa no ha podido esta vez.</p>':'';
+    else if(l.status==='pending')ex=`<div class="row" style="margin-top:10px"><button class="ok" data-a="${l.company_id}">Aceptar</button><button class="no" data-d="${l.company_id}">Rechazar</button></div>`;
+    else if(l.status==='declined')ex='<p class="mu" style="margin-top:6px">Rechazada</p>';
+    if(l.status==='accepted'){const ph=await getPhone(l.company_id);ex=`<p style="margin-top:8px"><b>Teléfono:</b> ${ph?`<a href="tel:${esc(ph)}">${esc(ph)}</a>`:'<span class="mu">no lo ha puesto</span>'}</p>`}
+    html+=`<div class="box"><span class="tag" style="background:#1b1f2a;color:#fff">${l.from_autonomo?'Tu solicitud':'Te han marcado'}</span><h3>${esc(c.name)}</h3><span class="tag">${esc(c.kind||'Empresa')}</span>${c.zone?`<span class="tag">${esc(c.zone)}</span>`:''}${c.rea?`<span class="tag b">REA ${esc(c.rea)}</span>`:''}<p class="mu">${esc(c.job||'')}</p>${ex}</div>`}
   $('#v').innerHTML=html;
   const ans=async(id,s)=>{await sb.from('likes').update({status:s}).eq('company_id',id).eq('autonomo_id',S.user.id);avisos()};
   $('#v').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>ans(b.dataset.a,'accepted'));
   $('#v').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>ans(b.dataset.d,'declined'));
 }
+async function companeros(){
+  const {data=[]}=await sb.from('profiles').select('*').eq('trade',S.me.trade).neq('id',S.user.id).limit(40);
+  const list=await enrich(data);const ph=data.length?data.reduce((a,p)=>a+(p.photos||[]).length,0)/data.length:0;
+  let h=`<h2>Compañeros de ${esc(S.me.trade.toLowerCase())}</h2>`;
+  if(!list.length)h+=`<div class="box or"><h3>Aún no hay más perfiles de tu oficio</h3><p class="mu">Invita a compañeros a unirse. Cuantos más perfiles, más empresas vendrán.</p></div>`;
+  else h+=`<div class="box or"><h3>Comparado contigo</h3><p class="mu">Los perfiles de tu oficio tienen de media ${ph.toFixed(1)} fotos. Tú tienes ${(S.me.photos||[]).length}.</p></div>`;
+  h+=list.map((p,i)=>`<div class="box"><div class="li"><div class="im" style="${(p.photos||[])[0]?`background-image:url('${esc(p.photos[0])}')`:''}">${(p.photos||[])[0]?'':'🛠'}</div><div><b>${esc(p.name)}</b><br><span class="mu">${esc(p.zone)} · ${p.years||0} años · ${(p.photos||[]).length} fotos</span><br>${stars(p.avg)}</div><button class="g s" data-o="${i}">Ver</button></div></div>`).join('');
+  $('#v').innerHTML=h;
+  $('#v').querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{const o=modal(`<div class="card">${cardIn(list[+b.dataset.o],true)}</div><button class="g" id="x" style="margin-top:12px">Cerrar</button>`,'l');$('#x').onclick=()=>o.remove()});
+}
 
 async function buscar(){
-  $('#v').innerHTML=`<div class="chips" id="ft" style="margin:4px 0 10px">${chips(['Todos',...TRADES],[F.trade]).replace('<div class="chips">','').replace(/<\/div>$/,'')}</div><input id="fz" placeholder="Zona (ej: Sabadell)" value="${esc(F.zone)}"><div class="deck" id="dk"></div><div class="row" id="bt"><button class="no" id="skip">✕ Pasar</button><button class="ok" id="like">♥ Me interesa</button></div>`;
-  bindChips($('#ft'),true,()=>{F.trade=picked($('#ft'))[0]||'Todos';buscar()});
+  $('#v').innerHTML=`<div id="ft">${chips(['Todos',...TRADES],[F.trade])}</div><div class="row" style="margin:10px 0"><input id="fz" placeholder="Zona (ej: Sabadell)" value="${esc(F.zone)}"><div id="vw">${chips(['Tarjetas','Lista'],[F.view==='cards'?'Tarjetas':'Lista'])}</div></div><div id="res"></div>`;
+  bindChips($('#ft'),true,()=>{F.trade=picked($('#ft'))[0]||'Todos';buscar()});bindChips($('#vw'),true,()=>{F.view=picked($('#vw'))[0]==='Lista'?'list':'cards';buscar()});
   $('#fz').onchange=e=>{F.zone=e.target.value.trim();buscar()};
   const mine=(await sb.from('likes').select('autonomo_id').eq('company_id',S.user.id)).data||[];
   const seen=new Set([...mine.map(m=>m.autonomo_id),...(S.skipped||[])]);
   let q=sb.from('profiles').select('*').eq('available',true).limit(60);
   if(F.trade!=='Todos')q=q.eq('trade',F.trade);if(F.zone)q=q.ilike('zone','%'+F.zone+'%');
-  const list=((await q).data||[]).filter(p=>!seen.has(p.id));
-  const rv=list.length?(await sb.from('reviews').select('autonomo_id,stars').in('autonomo_id',list.map(p=>p.id))).data||[]:[];
-  list.forEach(p=>{const r=rv.filter(x=>x.autonomo_id===p.id);p.avg=r.length?r.reduce((a,x)=>a+x.stars,0)/r.length:0;p.n=r.length;p.i=0});
+  const list=await enrich(((await q).data||[]).filter(p=>!seen.has(p.id)));list.forEach(p=>p.i=0);
+  const like=async(p,l)=>{if(l){const r=await sb.from('likes').insert({company_id:S.user.id,autonomo_id:p.id,job:S.me.job||''});if(r.error)say(r.error.message)}else(S.skipped=S.skipped||[]).push(p.id)};
+  const res=$('#res');
+  if(!list.length){res.innerHTML=`<div class="box or"><h3>No hay más perfiles ahora mismo</h3><p class="mu">Prueba otro oficio o quita la zona. Entran autónomos nuevos cada semana.</p></div>`;return}
+  if(F.view==='list'){
+    res.innerHTML=list.map((p,i)=>`<div class="box"><div class="li"><div class="im" style="${(p.photos||[])[0]?`background-image:url('${esc(p.photos[0])}')`:''}">${(p.photos||[])[0]?'':'🛠'}</div><div><b>${esc(p.name)}</b> <span class="tag">${esc(p.trade)}</span><br><span class="mu">${esc(p.zone)} · ${p.years||0} años</span><br>${stars(p.avg)}</div></div><div class="row" style="margin-top:10px"><button class="g s" data-v="${i}">Ver perfil</button><button class="s" data-l="${i}">Me interesa</button></div></div>`).join('');
+    res.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{const o=modal(`<div class="card">${cardIn(list[+b.dataset.v],true)}</div><button class="g" id="x" style="margin-top:12px">Cerrar</button>`,'l');$('#x').onclick=()=>o.remove()});
+    res.querySelectorAll('[data-l]').forEach(b=>b.onclick=async()=>{await like(list[+b.dataset.l],true);buscar()});return}
+  res.innerHTML=`<div class="deck" id="dk"></div><div class="row" id="bt"><button class="no" id="skip">✕ Pasar</button><button class="ok" id="like">♥ Me interesa</button></div>`;
   const dk=$('#dk');
-  const act=async like=>{const p=list.shift();if(!p)return;
-    if(like){const r=await sb.from('likes').insert({company_id:S.user.id,autonomo_id:p.id,job:S.me.job||''});if(r.error)say(r.error.message)}else(S.skipped=S.skipped||[]).push(p.id);show()};
+  const act=async l=>{const p=list.shift();if(!p)return;await like(p,l);show()};
   function show(){
     const p=list[0];
-    if(!p){dk.style.height='auto';dk.innerHTML=`<div class="box or"><h3>No hay más perfiles ahora mismo</h3><p class="mu">Prueba otro oficio o quita la zona. Entran autónomos nuevos cada semana.</p></div>`;$('#bt').style.display='none';return}
-    $('#bt').style.display='';const ph=p.photos||[];
-    dk.innerHTML=`<div class="card" id="cd"><div class="ph" id="ph" style="${ph[0]?`background-image:url('${esc(ph[0])}')`:''}">${ph[0]?'':'🛠'}${ph.length>1?`<div class="dots">${ph.map((_,i)=>`<i class="${i===0?'on':''}"></i>`).join('')}</div>`:''}</div>
-    <div class="in"><h2 style="margin-bottom:6px">${esc(p.name)}</h2><span class="tag">${esc(p.trade)}</span><span class="tag">${esc(p.zone)}</span><span class="tag">${p.years||0} años</span>${p.rate?`<span class="tag">${esc(p.rate)}</span>`:''}
-    <p style="margin:2px 0 6px">${stars(p.avg)}${p.n?` <span class="mu">(${p.n})</span>`:''}</p>
-    ${[p.registered&&'De alta',p.insured&&'Con seguro',p.has_van&&'Furgoneta',p.own_tools&&'Herramienta propia'].filter(Boolean).map(t=>`<span class="tag b">${t}</span>`).join('')}
-    <p class="mu" style="margin-top:4px">${esc((p.skills||[]).join(' · '))}</p><p style="margin-top:6px;font-size:14px">${esc((p.bio||'').slice(0,110))}</p></div>
-    <div class="stamp l">ME INTERESA</div><div class="stamp n">PASO</div></div>`;
+    if(!p){dk.style.height='auto';dk.innerHTML=`<div class="box or"><h3>No hay más perfiles ahora mismo</h3><p class="mu">Prueba otro oficio o quita la zona.</p></div>`;$('#bt').style.display='none';return}
+    const ph=p.photos||[];
+    dk.innerHTML=`<div class="card" id="cd"><div class="ph" id="ph" style="${ph[0]?`background-image:url('${esc(ph[0])}')`:''}">${ph[0]?'':'🛠'}${ph.length>1?`<div class="dots">${ph.map((_,i)=>`<i class="${i===0?'on':''}"></i>`).join('')}</div>`:''}</div>${cardIn({...p,bio:(p.bio||'').slice(0,100),work_notes:''},false)}<div class="stamp l">ME INTERESA</div><div class="stamp n">PASO</div></div>`;
     const cd=$('#cd');let x0=null,dx=0;
     cd.onpointerdown=e=>{x0=e.clientX;cd.setPointerCapture(e.pointerId)};
     cd.onpointermove=e=>{if(x0===null)return;dx=e.clientX-x0;cd.style.transform=`translateX(${dx}px) rotate(${dx/20}deg)`;cd.querySelector('.l').style.opacity=Math.max(0,dx/100);cd.querySelector('.n').style.opacity=Math.max(0,-dx/100)};
@@ -267,19 +378,22 @@ async function buscar(){
   }
   $('#like').onclick=()=>act(true);$('#skip').onclick=()=>act(false);show();
 }
-
 async function contactos(){
   const {data=[]}=await sb.from('likes').select('*, profiles(name,trade,zone)').eq('company_id',S.user.id).order('created_at',{ascending:false});
   const rv=(await sb.from('reviews').select('autonomo_id').eq('company_id',S.user.id)).data||[];const done=new Set(rv.map(r=>r.autonomo_id));
-  let html='<h2 style="margin-top:8px">Tus contactos</h2>';
-  if(!data.length)html+=`<div class="box or"><h3>Aún no has marcado a nadie</h3><p class="mu">Ve a Buscar, mira los perfiles y pulsa Me interesa en los que te gusten. Cuando acepten, verás aquí su teléfono.</p></div>`;
+  let html='<h2>Contactos</h2>';
+  if(!data.length)html+=`<div class="box or"><h3>Aún no hay contactos</h3><p class="mu">Ve a Buscar y pulsa Me interesa en los perfiles que te gusten. Los autónomos también pueden apuntarse a tu trabajo si lo publicas en Empresa. Cuando acepten, verás aquí su teléfono.</p></div>`;
   for(const l of data){const p=l.profiles||{};let ex='';
-    if(l.status==='pending')ex='<p class="mu">Esperando respuesta…</p>';
+    if(l.from_autonomo&&l.status==='pending')ex=`<div class="row" style="margin-top:8px"><button class="ok" data-a="${l.autonomo_id}">Aceptar</button><button class="no" data-d="${l.autonomo_id}">Rechazar</button></div>`;
+    else if(l.status==='pending')ex='<p class="mu">Esperando respuesta…</p>';
     else if(l.status==='declined')ex='<p class="mu">No está disponible</p>';
     else{const ph=await getPhone(l.autonomo_id);ex=`<p><b>Teléfono:</b> ${ph?`<a href="tel:${esc(ph)}">${esc(ph)}</a>`:'<span class="mu">no lo ha puesto</span>'}</p>`;
       ex+=done.has(l.autonomo_id)?'<p class="mu">Ya lo has valorado.</p>':`<label>Cuando hayáis trabajado juntos, valóralo</label><div class="row"><select data-s="${l.autonomo_id}"><option value="5">5 ★</option><option value="4">4 ★</option><option value="3">3 ★</option><option value="2">2 ★</option><option value="1">1 ★</option></select><input data-c="${l.autonomo_id}" placeholder="Comentario"><button data-r="${l.autonomo_id}">Valorar</button></div>`}
-    html+=`<div class="box"><h3>${esc(p.name)}</h3><span class="tag">${esc(p.trade)}</span><span class="tag">${esc(p.zone)}</span>${ex}</div>`}
+    html+=`<div class="box"><span class="tag" style="background:#1b1f2a;color:#fff">${l.from_autonomo?'Solicitud recibida':'Tu me interesa'}</span><h3>${esc(p.name)}</h3><span class="tag">${esc(p.trade)}</span><span class="tag">${esc(p.zone)}</span>${ex}</div>`}
   $('#v').innerHTML=html;
+  const ans=async(id,s)=>{await sb.from('likes').update({status:s}).eq('company_id',S.user.id).eq('autonomo_id',id);contactos()};
+  $('#v').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>ans(b.dataset.a,'accepted'));
+  $('#v').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>ans(b.dataset.d,'declined'));
   $('#v').querySelectorAll('[data-r]').forEach(b=>b.onclick=async()=>{const id=b.dataset.r;
     const r=await sb.from('reviews').insert({company_id:S.user.id,autonomo_id:id,stars:+$(`[data-s="${id}"]`).value,comment:$(`[data-c="${id}"]`).value.trim()});
     if(r.error)return say(r.error.message);contactos()});
