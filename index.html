@@ -65,7 +65,7 @@ button.w{width:100%}button.s{padding:8px 14px;font-size:14px;border-radius:11px}
 .card .ph{height:300px;background:#fff4ea center/cover;position:relative;display:flex;align-items:center;justify-content:center;font-size:54px}
 .card .dots{position:absolute;top:10px;left:0;right:0;display:flex;gap:4px;padding:0 12px}.dots i{flex:1;height:4px;border-radius:4px;background:#ffffff88}.dots i.on{background:#fff}
 .card .in{padding:14px 16px}
-.strip{display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x mandatory;height:230px;background:var(--soft)}.strip img{height:100%;width:88%;scroll-snap-align:start;flex:none;object-fit:cover;object-position:center 25%}.strip.one img{width:100%}
+.strip{display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x mandatory;height:260px;background:var(--soft)}.sl{position:relative;flex:none;width:88%;height:100%;scroll-snap-align:start;overflow:hidden}.strip.one .sl{width:100%}.sl img,.ph img{position:relative;width:100%;height:100%;object-fit:contain}.bgb{position:absolute;inset:-24px;background:center/cover;filter:blur(18px) brightness(.92)}.card .ph{overflow:hidden}
 .stamp{position:absolute;top:24px;font-size:26px;font-weight:900;border:4px solid;border-radius:12px;padding:2px 12px;opacity:0;background:#fffc}
 .stamp.l{left:18px;color:var(--ok);transform:rotate(-12deg)}.stamp.n{right:18px;color:var(--no);transform:rotate(12deg)}
 .thumbs{display:flex;gap:8px;flex-wrap:wrap}.thumbs div{position:relative}
@@ -151,11 +151,11 @@ function landing(){
   <div class="hero up"><div><h1>Autónomos de obra, <em>sin intermediarios</em></h1></div>${CONE}</div>
   <p class="lead up">La web donde las empresas de construcción encuentran autónomos de confianza en el Vallès, y los autónomos consiguen trabajo enseñando lo que saben hacer.</p>
   <div class="two r up">
-    <div class="who"><h2>🔨 Soy autónomo</h2><ul><li>Crea tu perfil con fotos de tus obras</li><li>Las empresas te encuentran y te avisan</li><li>Mira trabajos y apúntate</li><li>Gratis, siempre</li></ul><button class="w" data-go="a">Crear mi perfil</button></div>
-    <div class="who"><h2>🏗 Soy empresa</h2><ul><li>Mira perfiles con fotos y valoraciones</li><li>Filtra por oficio y zona</li><li>Publica tu trabajo y recibe solicitudes</li><li>Empieza gratis</li></ul><button class="w" data-go="e">Buscar autónomos</button></div>
+    <div class="who"><h2>🔨 Soy autónomo</h2><ul><li>Crea tu perfil con fotos de tus obras</li><li>Las empresas te encuentran y te avisan</li><li>Te avisan las empresas interesadas</li><li>Gratis, siempre</li></ul><button class="w" data-go="a">Crear mi perfil</button></div>
+    <div class="who"><h2>🏗 Soy empresa</h2><ul><li>Mira perfiles con fotos y valoraciones</li><li>Filtra por oficio y zona</li><li>Marca los que te interesan y llámalos</li><li>Empieza gratis</li></ul><button class="w" data-go="e">Buscar autónomos</button></div>
   </div>
   <h2 style="margin-top:26px">Cómo funciona</h2>
-  <ol class="steps box or"><li><b>El autónomo se registra</b><br><span class="mu">Sube fotos de sus trabajos y se crea un mini currículum en 3 minutos.</span></li><li><b>La empresa busca y marca</b><br><span class="mu">Ve tarjetas con fotos, oficio, valoraciones y disponibilidad. O el autónomo se apunta a sus trabajos.</span></li><li><b>Si hay interés, se conocen</b><br><span class="mu">Se enseñan los teléfonos. Después, la empresa lo valora.</span></li></ol>
+  <ol class="steps box or"><li><b>El autónomo se registra</b><br><span class="mu">Sube fotos de sus trabajos y se crea un mini currículum en 3 minutos.</span></li><li><b>La empresa busca y marca</b><br><span class="mu">Ve tarjetas con fotos, oficio, valoraciones y disponibilidad.</span></li><li><b>Si hay interés, se conocen</b><br><span class="mu">Se enseñan los teléfonos. Después, la empresa lo valora.</span></li></ol>
   <div class="sample"><div class="card"><div class="ph" style="height:120px;background:linear-gradient(135deg,#ffd9bd,#ffb27a)">🧱</div><div class="in"><span class="tag" style="background:#1b1f2a;color:#fff">EJEMPLO</span><h3>Carlos M.</h3><span class="tag">Albañil</span><span class="tag">Sabadell</span><span class="tag">12 años</span><p><span class="st">★★★★★</span> <b>4.8</b></p><span class="tag b">De alta</span><span class="tag b">Con seguro</span></div></div></div>
   <div class="box" style="margin-top:22px"><h3>¿Por qué esta web?</h3><p class="mu">Faltan miles de trabajadores en la construcción y hoy se contrata por WhatsApp y boca a boca. Aquí ves el trabajo real de cada profesional antes de llamar.</p></div>
   <button class="g w" data-go="in">Ya tengo cuenta</button>
@@ -181,9 +181,9 @@ function authView(mode,role='a'){
     S.user=r.data.user;loadRole();
   };
 }
-const TABS={a:[['inicio','🏠','Inicio'],['perfil','👤','Mi perfil'],['trabajos','💼','Trabajos'],['avisos','🔔','Avisos'],['companeros','👥','Compañeros']],
+const TABS={a:[['inicio','🏠','Inicio'],['perfil','👤','Mi perfil'],['avisos','🔔','Avisos'],['companeros','👥','Compañeros']],
             e:[['inicio','🏠','Inicio'],['buscar','🔍','Buscar'],['contactos','🤝','Contactos'],['empresa','🏢','Empresa']]};
-const VIEWS={inicio:()=>S.role==='a'?inicioA():inicioE(),perfil:()=>perfil(),trabajos:()=>trabajos(),avisos:()=>avisos(),companeros:()=>companeros(),buscar:()=>buscar(),contactos:()=>contactos(),empresa:()=>empresa()};
+const VIEWS={inicio:()=>S.role==='a'?inicioA():inicioE(),perfil:()=>perfil(),avisos:()=>avisos(),companeros:()=>companeros(),buscar:()=>buscar(),contactos:()=>contactos(),empresa:()=>empresa()};
 function go(tab){
   if(tab)S.tab=tab;
   app.innerHTML=hdr(true)+`<div class="tabs">${TABS[S.role].map(([k,i,n])=>`<button class="${S.tab===k?'on':''}" data-k="${k}"><i>${i}</i>${n}</button>`).join('')}</div><div id="v"></div>`;
@@ -198,14 +198,14 @@ async function getPhone(uid){const {data}=await sb.from('contacts').select('phon
 function progress(items){const d=items.filter(i=>i[1]).length,p=Math.round(d/items.length*100);
   return `<div class="box or"><h2>${p===100?'Perfil completo 🎉':'Completa tu perfil ('+p+'%)'}</h2><div class="bar"><i style="width:${p}%"></i></div><div class="todo">${items.map(i=>`<span class="${i[1]?'d':''}">${i[1]?'✓':'○'} ${i[0]}</span>`).join('')}</div></div>`}
 const progA=()=>progress([['3 fotos o más',(S.me.photos||[]).length>=3],['Oficio',!!S.me.trade],['Qué sabes hacer',(S.me.skills||[]).length>0],['Presentación',(S.me.bio||'').length>20],['Teléfono',!!S.phone]]);
-const progE=()=>progress([['Nombre',!!S.me.name],['A quién buscas',(S.me.looking_for||[]).length>0],['Trabajo que ofreces',(S.me.job||'').length>10],['REA',!!S.me.rea],['Teléfono',!!S.phone]]);
+const progE=()=>progress([['Nombre',!!S.me.name],['A quién buscas',(S.me.looking_for||[]).length>0],['Logo',!!S.me.logo],['REA',!!S.me.rea],['Teléfono',!!S.phone]]);
 const thumb=p=>{const u=(p.photos||[])[0];return `<div class="im">${u?`<img src="${esc(u)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:14px" onerror="this.replaceWith('🛠')">`:'🛠'}</div>`};
 function phCnt(el){const i=Math.min(el.children.length-1,Math.round(el.scrollLeft/(el.clientWidth*.88+6))),c=el.parentNode.querySelector('.cnt');if(c)c.textContent='📷 '+(i+1)+' / '+el.children.length+(i<el.children.length-1?' ›':'')}
 async function enrich(list){if(!list.length)return list;const rv=(await sb.from('reviews').select('autonomo_id,stars').in('autonomo_id',list.map(p=>p.id))).data||[];
   list.forEach(p=>{const r=rv.filter(x=>x.autonomo_id===p.id);p.avg=r.length?r.reduce((a,x)=>a+x.stars,0)/r.length:0;p.n=r.length});return list}
 const badges=p=>{const l=[p.registered&&'Alta de autónomo',p.insured&&'Seguro de responsabilidad civil',p.tpc&&'Tarjeta Profesional de la Construcción',p.prl&&'Curso PRL',p.vehicle&&p.vehicle!=='Sin vehículo'&&'Vehículo: '+p.vehicle.toLowerCase(),p.tools&&p.tools!=='No tengo'&&'Herramienta '+p.tools.toLowerCase()].filter(Boolean);return l.length?`<h4>Documentación y medios</h4>`+l.map(t=>`<span class="tag b">✓ ${esc(t)}</span>`).join(''):''};
 function cardIn(p,strip){const ph=p.photos||[];
-  return (strip?(ph.length?`<div class="stripw"><div class="strip ${ph.length===1?'one':''}" onscroll="phCnt(this)">${ph.map(u=>`<img src="${esc(u)}" alt="">`).join('')}</div>${ph.length>1?`<div class="cnt">📷 1 / ${ph.length} ›</div>`:''}</div>`:`<div class="ph" style="flex-direction:column;font-size:15px;color:var(--mu)"><span style="font-size:54px">🛠</span>Sin fotos todavía</div>`):'')+
+  return (strip?(ph.length?`<div class="stripw"><div class="strip ${ph.length===1?'one':''}" onscroll="phCnt(this)">${ph.map(u=>`<div class="sl"><div class="bgb" style="background-image:url('${esc(u)}')"></div><img src="${esc(u)}" alt=""></div>`).join('')}</div>${ph.length>1?`<div class="cnt">📷 1 / ${ph.length} ›</div>`:''}</div>`:`<div class="ph" style="flex-direction:column;font-size:15px;color:var(--mu)"><span style="font-size:54px">🛠</span>Sin fotos todavía</div>`):'')+
   `<div class="in"><h2 style="margin-bottom:6px">${esc(p.name)}</h2><span class="tag">${esc(p.trade)}</span><span class="tag">${esc(p.zone)}</span><span class="tag">${p.years||0} años</span>
   <div class="rate"><span>💶 Tarifa</span><b>${p.rate?esc(/^\d+([.,]\d+)?$/.test(p.rate.trim())?p.rate.trim()+' €/hora':p.rate):'A convenir'}</b></div>
   <p style="margin:2px 0 6px">${stars(p.avg)}${p.n?` <span class="mu">(${p.n})</span>`:''}</p>${badges(p)}
@@ -232,20 +232,20 @@ async function inicioA(){
   <div class="stats"><div class="stat"><b>${inc.length}</b><span>Empresas te han marcado</span></div><div class="stat"><b>${acc}</b><span>Contactos</span></div><div class="stat"><b>${p.n?p.avg.toFixed(1):'–'}</b><span>Valoración</span></div></div>
   ${progA()}
   ${tips.length?`<div class="box"><h3>Para que te contraten antes</h3>${tips.slice(0,3).map(t=>`<p class="mu" style="margin:6px 0">• ${esc(t)}</p>`).join('')}</div>`:''}
-  <div class="box"><h3>¿Qué quieres hacer?</h3><div style="display:grid;gap:8px;margin-top:8px"><button data-g="trabajos">💼 Ver trabajos de empresas</button><button class="g" id="pv">👁 Ver cómo me ve una empresa</button><button class="g" id="sh">📤 Compartir mi perfil por WhatsApp</button><button class="g" data-g="companeros">👥 Ver perfiles de compañeros</button></div></div>`;
+  <div class="box"><h3>¿Qué quieres hacer?</h3><div style="display:grid;gap:8px;margin-top:8px"><button data-g="avisos">🔔 Ver mis avisos</button><button class="g" id="pv">👁 Ver cómo me ve una empresa</button><button class="g" id="sh">📤 Compartir mi perfil por WhatsApp</button><button class="g" data-g="companeros">👥 Ver perfiles de compañeros</button></div></div>`;
   $('#v').querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>go(b.dataset.g));$('#pv').onclick=preview;$('#sh').onclick=share;
 }
 async function inicioE(){
   const [{count:disp},{data:ls=[]}]=await Promise.all([sb.from('profiles').select('id',{count:'exact',head:true}).eq('available',true),sb.from('likes').select('*').eq('company_id',S.user.id)]);
   S.phone=await getPhone(S.user.id);
-  const sol=ls.filter(l=>l.from_autonomo&&l.status==='pending').length;
   $('#v').innerHTML=`<h2>Hola, ${esc(S.me.name)} 👋</h2>
-  <div class="stats"><div class="stat"><b>${disp??0}</b><span>Autónomos disponibles</span></div><div class="stat"><b>${sol}</b><span>Solicitudes nuevas</span></div><div class="stat"><b>${ls.filter(l=>l.status==='accepted').length}</b><span>Contactos</span></div></div>
+  <div class="stats"><div class="stat"><b>${disp??0}</b><span>Autónomos disponibles</span></div><div class="stat"><b>${ls.length}</b><span>Autónomos marcados</span></div><div class="stat"><b>${ls.filter(l=>l.status==='accepted').length}</b><span>Contactos</span></div></div>
   ${progE()}
-  <div class="box"><h3>¿Qué quieres hacer?</h3><div style="display:grid;gap:8px;margin-top:8px"><button data-g="buscar">🔍 Buscar autónomos</button>${sol?`<button data-g="contactos">📥 Ver ${sol} solicitudes</button>`:''}<button class="g" data-g="empresa">${(S.me.job||'').length>10?'✏️ Editar el trabajo que ofrezco':'📝 Publicar un trabajo'}</button><button class="g" id="pv">👁 Ver cómo me ve un autónomo</button></div></div>`;
+  <div class="box"><h3>¿Qué quieres hacer?</h3><div style="display:grid;gap:8px;margin-top:8px"><button data-g="buscar">🔍 Buscar autónomos</button><button class="g" data-g="contactos">🤝 Ver mis contactos</button><button class="g" data-g="empresa">🏢 Completar el perfil de empresa</button><button class="g" id="pv">👁 Ver cómo me ve un autónomo</button></div></div>`;
   $('#v').querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>go(b.dataset.g));$('#pv').onclick=()=>{const c=S.me;const o=modal(`<span class="tag" style="background:#1b1f2a;color:#fff">Así te ve un autónomo</span>${compHTML(c)}<button class="g" id="x">Cerrar</button>`,'l');$('#x').onclick=()=>o.remove()};
 }
-const compHTML=c=>`<div class="box" style="margin-top:8px"><h3>${esc(c.name)}</h3><span class="tag">${esc(c.kind||'Empresa')}</span>${c.zone?`<span class="tag">${esc(c.zone)}</span>`:''}${c.rea?`<span class="tag b">REA ${esc(c.rea)}</span>`:''}<p class="mu" style="margin:4px 0">${(c.looking_for||[]).length?'Busca: '+esc(c.looking_for.join(', ')):''}</p><p>${esc(c.job||'Todavía no ha publicado ningún trabajo.')}</p>${c.about?`<p class="mu" style="margin-top:6px">${esc(c.about)}</p>`:''}</div>`;
+const logo=(c,z=44)=>c.logo?`<img src="${esc(c.logo)}" alt="" style="width:${z}px;height:${z}px;border-radius:12px;object-fit:cover;flex:none">`:`<div style="width:${z}px;height:${z}px;border-radius:12px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:${Math.round(z*.5)}px;flex:none">🏗</div>`;
+const compHTML=c=>`<div class="box" style="margin-top:8px"><div class="li" style="margin-bottom:8px">${logo(c,60)}<div><h3>${esc(c.name)}</h3><span class="tag">${esc(c.kind||'Empresa')}</span>${c.zone?`<span class="tag">${esc(c.zone)}</span>`:''}${c.rea?`<span class="tag b">REA ${esc(c.rea)}</span>`:''}</div></div>${(c.looking_for||[]).length?`<h4 style="font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--mu)">Suele buscar</h4><p>${esc(c.looking_for.join(', '))}</p>`:''}${c.about?`<h4 style="font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--mu);margin-top:8px">Sobre la empresa</h4><p>${esc(c.about)}</p>`:''}</div>`;
 
 async function perfil(){
   const p=S.me;S.phone=await getPhone(S.user.id);
@@ -288,54 +288,45 @@ async function perfil(){
     const b=tel?await sb.from('contacts').upsert({user_id:S.user.id,phone:tel}):{};
     if(a.error||b.error)return say((a.error||b.error).message+' (¿has ejecutado migracion-3.sql?)');
     Object.assign(S.me,row);S.phone=tel;$('#pg').innerHTML=progA();
-    saved('¡Perfil guardado!','Ya pueden verte las empresas. ¿Qué quieres hacer ahora?',[['Ver cómo me ve una empresa',preview],['Ver trabajos de empresas',()=>go('trabajos')],['Ir al inicio',()=>go('inicio')]])};
+    saved('¡Perfil guardado!','Ya pueden verte las empresas. ¿Qué quieres hacer ahora?',[['Ver cómo me ve una empresa',preview],['Ver mis avisos',()=>go('avisos')],['Ir al inicio',()=>go('inicio')]])};
 }
-function shrink(file){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>{const k=Math.min(1,900/Math.max(i.width,i.height));const c=document.createElement('canvas');c.width=i.width*k;c.height=i.height*k;c.getContext('2d').drawImage(i,0,0,c.width,c.height);c.toBlob(b=>b?res(b):rej(),'image/jpeg',.75)};i.onerror=rej;i.src=URL.createObjectURL(file)})}
+function shrink(file,m=900){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>{const k=Math.min(1,m/Math.max(i.width,i.height));const c=document.createElement('canvas');c.width=i.width*k;c.height=i.height*k;c.getContext('2d').drawImage(i,0,0,c.width,c.height);c.toBlob(b=>b?res(b):rej(),'image/jpeg',.75)};i.onerror=rej;i.src=URL.createObjectURL(file)})}
 
 async function empresa(){
   const c=S.me;S.phone=await getPhone(S.user.id);
   $('#v').innerHTML=`<div id="pg">${progE()}</div>
-  <div class="box"><h2>1. Tu empresa</h2><label>Nombre</label><input id="n" value="${esc(c.name)}" placeholder="Ej: Reformas Vallès S.L.">
+  <div class="box"><h2>1. Tu empresa</h2><div class="li"><div id="lgp">${logo(c,72)}</div><div><button class="g s" id="lgb">Subir logo</button><p class="mu">Se verá en tu perfil y en los avisos.</p></div></div><input id="lg" type="file" accept="image/*" hidden><label>Nombre</label><input id="n" value="${esc(c.name)}" placeholder="Ej: Reformas Vallès S.L.">
    <label>Tipo de empresa</label><select id="k">${opts(KINDS,c.kind)}</select>
    <label>Zona donde trabajáis</label><input id="z" value="${esc(c.zone||'Vallès')}" placeholder="Ej: Vallès Occidental"></div>
   <div class="box"><h2>2. A quién buscas</h2><p class="mu">Marca los oficios que necesitas.</p><div id="lf" style="margin-top:8px">${chips(TRADES,c.looking_for||[])}</div></div>
-  <div class="box"><h2>3. Trabajo que ofreces</h2><p class="mu">Los autónomos lo verán en el tablón de trabajos y en tu aviso.</p><textarea id="j" rows="4" maxlength="400" placeholder="Ej: Reforma integral de piso en Sabadell. 3 semanas. Empezamos el día 15. Pago a 15 días.">${esc(c.job)}</textarea></div>
-  <div class="box"><h2>4. Sobre vosotros</h2><textarea id="ab" rows="3" maxlength="300" placeholder="Ej: 20 años en el sector. 12 trabajadores. Siempre pagamos a tiempo.">${esc(c.about)}</textarea></div>
-  <div class="box"><h2>5. Confianza y contacto</h2><label>Número de REA (Registro de Empresas Acreditadas)</label><input id="r" value="${esc(c.rea)}" placeholder="Ej: 08/12345678">
+  <div class="box"><h2>3. Sobre vosotros</h2><textarea id="ab" rows="3" maxlength="300" placeholder="Ej: 20 años en el sector. 12 trabajadores. Siempre pagamos a tiempo.">${esc(c.about)}</textarea></div>
+  <div class="box"><h2>4. Confianza y contacto</h2><label>Número de REA (Registro de Empresas Acreditadas)</label><input id="r" value="${esc(c.rea)}" placeholder="Ej: 08/12345678">
    <label>Teléfono (solo lo ven los autónomos que acepten)</label><input id="ph" type="tel" value="${esc(S.phone)}" placeholder="Ej: 93 123 45 67"></div>
   <button class="w" id="sv">Guardar mi empresa</button>
   <small class="f">Obra Directa solo pone en contacto. La contratación, el pago y las condiciones son entre empresa y autónomo.</small>`;
   bindChips($('#lf'));
-  $('#sv').onclick=async()=>{const row={name:$('#n').value.trim()||'Mi empresa',kind:$('#k').value,zone:$('#z').value.trim()||'Vallès',looking_for:picked($('#lf')),job:$('#j').value.trim(),about:$('#ab').value.trim(),rea:$('#r').value.trim()};
+  $('#lgb').onclick=()=>$('#lg').click();
+  $('#lg').onchange=async e=>{const f=e.target.files[0];if(!f)return;const blob=await shrink(f,400),path=`${S.user.id}/logo-${Date.now()}.jpg`;
+    const up=await sb.storage.from('fotos').upload(path,blob,{contentType:'image/jpeg'});if(up.error)return say(up.error.message);
+    const url=sb.storage.from('fotos').getPublicUrl(path).data.publicUrl;const r=await sb.from('companies').update({logo:url}).eq('id',S.user.id);
+    if(r.error)return say(r.error.message+' (¿has ejecutado migracion-4.sql?)');S.me.logo=url;$('#lgp').innerHTML=logo(S.me,72);$('#pg').innerHTML=progE();say('Logo subido.')};
+  $('#sv').onclick=async()=>{const row={name:$('#n').value.trim()||'Mi empresa',kind:$('#k').value,zone:$('#z').value.trim()||'Vallès',looking_for:picked($('#lf')),about:$('#ab').value.trim(),rea:$('#r').value.trim()};
     const a=await sb.from('companies').update(row).eq('id',S.user.id);const tel=$('#ph').value.trim();
     const b=tel?await sb.from('contacts').upsert({user_id:S.user.id,phone:tel}):{};
-    if(a.error||b.error)return say((a.error||b.error).message+' (¿has ejecutado migracion-3.sql?)');
+    if(a.error||b.error)return say((a.error||b.error).message+' (¿has ejecutado migracion-4.sql?)');
     Object.assign(S.me,row);S.phone=tel;$('#pg').innerHTML=progE();
     saved('¡Empresa guardada!','Ya pueden verte los autónomos. ¿Qué quieres hacer ahora?',[['Buscar autónomos',()=>go('buscar')],['Ver cómo me ve un autónomo',()=>{const o=modal(`<span class="tag" style="background:#1b1f2a;color:#fff">Así te ve un autónomo</span>${compHTML(S.me)}<button class="g" id="x">Cerrar</button>`,'l');$('#x').onclick=()=>o.remove()}],['Ir al inicio',()=>go('inicio')]])};
 }
 
-async function trabajos(){
-  const [{data:cs=[]},{data:mine=[]}]=await Promise.all([sb.from('companies').select('*').neq('job','').limit(60),sb.from('likes').select('*').eq('autonomo_id',S.user.id)]);
-  const st=Object.fromEntries(mine.map(l=>[l.company_id,l]));
-  cs.sort((a,b)=>((b.looking_for||[]).includes(S.me.trade)?1:0)-((a.looking_for||[]).includes(S.me.trade)?1:0));
-  let h='<h2>Trabajos de empresas</h2>';
-  if(!cs.length)h+=`<div class="box or"><h3>Todavía no hay trabajos publicados</h3><p class="mu">Las empresas irán publicando. Mientras, completa tu perfil y compártelo por WhatsApp con las empresas que conozcas.</p></div>`;
-  for(const c of cs){const l=st[c.id];
-    const btn=!l?`<button class="w" data-ap="${c.id}">Me interesa</button>`:l.status==='accepted'?'<span class="tag b">Aceptado: mira Avisos</span>':l.status==='declined'?'<span class="tag">No ha podido ser</span>':'<span class="tag b">Solicitud enviada</span>';
-    h+=`<div class="box">${compHTML(c).replace('class="box" style="margin-top:8px"','style="margin:0"')}${(c.looking_for||[]).includes(S.me.trade)?'<span class="tag b">Busca tu oficio</span>':''}<div style="margin-top:8px">${btn}</div></div>`}
-  $('#v').innerHTML=h;
-  $('#v').querySelectorAll('[data-ap]').forEach(b=>b.onclick=async()=>{const r=await sb.from('likes').insert({company_id:b.dataset.ap,autonomo_id:S.user.id,from_autonomo:true,job:''});if(r.error)return say(r.error.message+' (¿has ejecutado migracion-3.sql?)');trabajos()});
-}
 async function avisos(){
-  const {data=[]}=await sb.from('likes').select('*, companies(name,rea,kind,zone,job)').eq('autonomo_id',S.user.id).order('created_at',{ascending:false});
+  const {data=[]}=await sb.from('likes').select('*, companies(name,rea,kind,zone,logo)').eq('autonomo_id',S.user.id).order('created_at',{ascending:false});
   let html='<h2>Avisos</h2>';
-  if(!data.length)html+=`<div class="box or"><h3>Todavía no hay avisos</h3><p class="mu">Cuando una empresa te marque, aparecerá aquí. Para que te encuentren antes: sube 3 fotos o más, marca lo que sabes hacer y di que estás disponible. O apúntate tú a un trabajo en la pestaña Trabajos.</p></div>`;
+  if(!data.length)html+=`<div class="box or"><h3>Todavía no hay avisos</h3><p class="mu">Cuando una empresa te marque, aparecerá aquí. Para que te encuentren antes: sube 3 fotos o más, marca lo que sabes hacer y di que estás disponible.</p></div>`;
   for(const l of data){const c=l.companies||{};let ex='';
-    if(l.from_autonomo)ex=l.status==='pending'?'<p class="mu" style="margin-top:6px">Has enviado tu solicitud. Esperando respuesta.</p>':l.status==='declined'?'<p class="mu">La empresa no ha podido esta vez.</p>':'';
-    else if(l.status==='pending')ex=`<div class="row" style="margin-top:10px"><button class="ok" data-a="${l.company_id}">Aceptar</button><button class="no" data-d="${l.company_id}">Rechazar</button></div>`;
+    if(l.status==='pending')ex=`<div class="row" style="margin-top:10px"><button class="ok" data-a="${l.company_id}">Aceptar</button><button class="no" data-d="${l.company_id}">Rechazar</button></div>`;
     else if(l.status==='declined')ex='<p class="mu" style="margin-top:6px">Rechazada</p>';
     if(l.status==='accepted'){const ph=await getPhone(l.company_id);ex=`<p style="margin-top:8px"><b>Teléfono:</b> ${ph?`<a href="tel:${esc(ph)}">${esc(ph)}</a>`:'<span class="mu">no lo ha puesto</span>'}</p>`}
-    html+=`<div class="box"><span class="tag" style="background:#1b1f2a;color:#fff">${l.from_autonomo?'Tu solicitud':'Te han marcado'}</span><h3>${esc(c.name)}</h3><span class="tag">${esc(c.kind||'Empresa')}</span>${c.zone?`<span class="tag">${esc(c.zone)}</span>`:''}${c.rea?`<span class="tag b">REA ${esc(c.rea)}</span>`:''}<p class="mu">${esc(c.job||'')}</p>${ex}</div>`}
+    html+=`<div class="box"><span class="tag" style="background:#1b1f2a;color:#fff">Te han marcado</span><div class="li" style="margin:6px 0">${logo(c)}<div><h3 style="margin:0">${esc(c.name)}</h3></div></div><span class="tag">${esc(c.kind||'Empresa')}</span>${c.zone?`<span class="tag">${esc(c.zone)}</span>`:''}${c.rea?`<span class="tag b">REA ${esc(c.rea)}</span>`:''}${l.job?`<p style="margin:6px 0"><span class="mu">Nota de la empresa:</span> ${esc(l.job)}</p>`:''}${ex}</div>`}
   $('#v').innerHTML=html;
   const ans=async(id,s)=>{await sb.from('likes').update({status:s}).eq('company_id',id).eq('autonomo_id',S.user.id);avisos()};
   $('#v').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>ans(b.dataset.a,'accepted'));
@@ -363,6 +354,8 @@ async function companeros(){
   $('#v').querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{const o=modal(`<div class="card">${cardIn(list[+b.dataset.o],true)}</div><button class="g" id="x" style="margin-top:12px">Cerrar</button>`,'l');$('#x').onclick=()=>o.remove()});
 }
 
+function askNote(p){return new Promise(res=>{const o=modal(`<h2>Me interesa ${esc((p.name||'').split(' ')[0])}</h2><p>Si quieres, añade una nota corta para que sepa de qué se trata.</p><textarea id="nt" rows="3" maxlength="200" placeholder="Ej: Reforma de baño en Sabadell. Empezamos el día 15."></textarea><button id="n1" style="margin-top:12px">Enviar</button><button class="g" id="n2">Enviar sin nota</button><button class="g" id="n3">Cancelar</button>`);
+  o.onclick=e=>{if(e.target===o){o.remove();res(null)}};$('#n1').onclick=()=>{const v=$('#nt').value.trim();o.remove();res(v)};$('#n2').onclick=()=>{o.remove();res('')};$('#n3').onclick=()=>{o.remove();res(null)}})}
 async function buscar(){
   $('#v').innerHTML=`<div id="ft">${chips(['Todos',...TRADES],[F.trade])}</div><div class="row" style="margin:10px 0"><input id="fz" placeholder="Zona (ej: Sabadell)" value="${esc(F.zone)}"><div id="vw">${chips(['Tarjetas','Lista'],[F.view==='cards'?'Tarjetas':'Lista'])}</div></div><div id="res"></div>`;
   bindChips($('#ft'),true,()=>{F.trade=picked($('#ft'))[0]||'Todos';buscar()});bindChips($('#vw'),true,()=>{F.view=picked($('#vw'))[0]==='Lista'?'list':'cards';buscar()});
@@ -372,47 +365,47 @@ async function buscar(){
   let q=sb.from('profiles').select('*').eq('available',true).limit(60);
   if(F.trade!=='Todos')q=q.eq('trade',F.trade);if(F.zone)q=q.ilike('zone','%'+F.zone+'%');
   const list=await enrich(((await q).data||[]).filter(p=>!seen.has(p.id)));list.forEach(p=>p.i=0);
-  const like=async(p,l)=>{if(l){const r=await sb.from('likes').insert({company_id:S.user.id,autonomo_id:p.id,job:S.me.job||''});if(r.error)say(r.error.message)}else(S.skipped=S.skipped||[]).push(p.id)};
+  const like=async(p,l,note)=>{if(l){const r=await sb.from('likes').insert({company_id:S.user.id,autonomo_id:p.id,job:note||''});if(r.error)say(r.error.message)}else(S.skipped=S.skipped||[]).push(p.id)};
   const res=$('#res');
   if(!list.length){res.innerHTML=`<div class="box or"><h3>No hay más perfiles ahora mismo</h3><p class="mu">Prueba otro oficio o quita la zona. Entran autónomos nuevos cada semana.</p></div>`;return}
   if(F.view==='list'){
     res.innerHTML=list.map((p,i)=>`<div class="box"><div class="li">${thumb(p)}<div><b>${esc(p.name)}</b> <span class="tag">${esc(p.trade)}</span><br><span class="mu">${esc(p.zone)} · ${p.years||0} años · ${(p.photos||[]).length} fotos</span><br>${stars(p.avg)}</div></div><div class="row" style="margin-top:10px"><button class="g s" data-v="${i}">Ver perfil</button><button class="s" data-l="${i}">Me interesa</button></div></div>`).join('');
     res.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{const o=modal(`<div class="card">${cardIn(list[+b.dataset.v],true)}</div><button class="g" id="x" style="margin-top:12px">Cerrar</button>`,'l');$('#x').onclick=()=>o.remove()});
-    res.querySelectorAll('[data-l]').forEach(b=>b.onclick=async()=>{await like(list[+b.dataset.l],true);buscar()});return}
+    res.querySelectorAll('[data-l]').forEach(b=>b.onclick=async()=>{const p=list[+b.dataset.l],n=await askNote(p);if(n===null)return;await like(p,true,n);buscar()});return}
   res.innerHTML=`<div class="deck" id="dk"></div><div class="row" id="bt"><button class="no" id="skip">✕ Pasar</button><button class="ok" id="like">♥ Me interesa</button></div>`;
   const dk=$('#dk');
-  const act=async l=>{const p=list.shift();if(!p)return;await like(p,l);show()};
+  const act=async l=>{const p=list[0];if(!p)return;let note='';if(l){note=await askNote(p);if(note===null){show();return}}list.shift();await like(p,l,note);show()};
   function show(){
     const p=list[0];
     if(!p){dk.style.height='auto';dk.innerHTML=`<div class="box or"><h3>No hay más perfiles ahora mismo</h3><p class="mu">Prueba otro oficio o quita la zona.</p></div>`;$('#bt').style.display='none';return}
     const ph=p.photos||[];
-    dk.innerHTML=`<div class="card" id="cd"><div class="ph" id="ph" style="${ph[0]?`background-image:url('${esc(ph[0])}')`:''}">${ph[0]?'':'🛠'}${ph.length>1?`<div class="dots">${ph.map((_,i)=>`<i class="${i===0?'on':''}"></i>`).join('')}</div>`:''}</div>${cardIn({...p,bio:(p.bio||'').slice(0,100),work_notes:''},false)}<div class="stamp l">ME INTERESA</div><div class="stamp n">PASO</div></div>`;
+    dk.innerHTML=`<div class="card" id="cd"><div class="ph" id="ph">${ph[0]?`<div class="bgb" style="background-image:url('${esc(ph[0])}')"></div><img src="${esc(ph[0])}" alt="">`:'🛠'}${ph.length>1?`<div class="dots">${ph.map((_,i)=>`<i class="${i===0?'on':''}"></i>`).join('')}</div>`:''}</div>${cardIn({...p,bio:(p.bio||'').slice(0,100),work_notes:''},false)}<div class="stamp l">ME INTERESA</div><div class="stamp n">PASO</div></div>`;
     const cd=$('#cd');let x0=null,dx=0;
     cd.onpointerdown=e=>{x0=e.clientX;cd.setPointerCapture(e.pointerId)};
     cd.onpointermove=e=>{if(x0===null)return;dx=e.clientX-x0;cd.style.transform=`translateX(${dx}px) rotate(${dx/20}deg)`;cd.querySelector('.l').style.opacity=Math.max(0,dx/100);cd.querySelector('.n').style.opacity=Math.max(0,-dx/100)};
     cd.onpointerup=()=>{if(x0===null)return;x0=null;
       if(Math.abs(dx)>100){const l=dx>0;cd.style.transition='transform .25s,opacity .25s';cd.style.transform=`translateX(${l?600:-600}px)`;cd.style.opacity=0;setTimeout(()=>act(l),220)}
       else{const tap=Math.abs(dx)<6;cd.style.transition='transform .2s';cd.style.transform='';cd.querySelector('.l').style.opacity=cd.querySelector('.n').style.opacity=0;setTimeout(()=>cd.style.transition='',200);
-        if(tap&&ph.length>1){p.i=(p.i+1)%ph.length;$('#ph').style.backgroundImage=`url('${ph[p.i]}')`;$('#ph').querySelectorAll('.dots i').forEach((d,i)=>d.classList.toggle('on',i===p.i))}}dx=0};
+        if(tap&&ph.length>1){p.i=(p.i+1)%ph.length;$('#ph .bgb').style.backgroundImage=`url('${ph[p.i]}')`;$('#ph img').src=ph[p.i];$('#ph').querySelectorAll('.dots i').forEach((d,i)=>d.classList.toggle('on',i===p.i))}}dx=0};
   }
   $('#like').onclick=()=>act(true);$('#skip').onclick=()=>act(false);show();
 }
 async function contactos(){
-  const {data=[]}=await sb.from('likes').select('*, profiles(name,trade,zone)').eq('company_id',S.user.id).order('created_at',{ascending:false});
+  const {data=[]}=await sb.from('likes').select('*, profiles(*)').eq('company_id',S.user.id).order('created_at',{ascending:false});
   const rv=(await sb.from('reviews').select('autonomo_id').eq('company_id',S.user.id)).data||[];const done=new Set(rv.map(r=>r.autonomo_id));
+  await enrich(data.map(l=>l.profiles).filter(Boolean));
   let html='<h2>Contactos</h2>';
-  if(!data.length)html+=`<div class="box or"><h3>Aún no hay contactos</h3><p class="mu">Ve a Buscar y pulsa Me interesa en los perfiles que te gusten. Los autónomos también pueden apuntarse a tu trabajo si lo publicas en Empresa. Cuando acepten, verás aquí su teléfono.</p></div>`;
+  if(!data.length)html+=`<div class="box or"><h3>Aún no hay contactos</h3><p class="mu">Ve a Buscar y pulsa Me interesa en los perfiles que te gusten. Cuando acepten, verás aquí su teléfono.</p></div>`;
   for(const l of data){const p=l.profiles||{};let ex='';
-    if(l.from_autonomo&&l.status==='pending')ex=`<div class="row" style="margin-top:8px"><button class="ok" data-a="${l.autonomo_id}">Aceptar</button><button class="no" data-d="${l.autonomo_id}">Rechazar</button></div>`;
-    else if(l.status==='pending')ex='<p class="mu">Esperando respuesta…</p>';
+    if(l.status==='pending')ex='<p class="mu">Esperando respuesta…</p>';
     else if(l.status==='declined')ex='<p class="mu">No está disponible</p>';
     else{const ph=await getPhone(l.autonomo_id);ex=`<p><b>Teléfono:</b> ${ph?`<a href="tel:${esc(ph)}">${esc(ph)}</a>`:'<span class="mu">no lo ha puesto</span>'}</p>`;
       ex+=done.has(l.autonomo_id)?'<p class="mu">Ya lo has valorado.</p>':`<label>Cuando hayáis trabajado juntos, valóralo</label><div class="row"><select data-s="${l.autonomo_id}"><option value="5">5 ★</option><option value="4">4 ★</option><option value="3">3 ★</option><option value="2">2 ★</option><option value="1">1 ★</option></select><input data-c="${l.autonomo_id}" placeholder="Comentario"><button data-r="${l.autonomo_id}">Valorar</button></div>`}
-    html+=`<div class="box"><span class="tag" style="background:#1b1f2a;color:#fff">${l.from_autonomo?'Solicitud recibida':'Tu me interesa'}</span><h3>${esc(p.name)}</h3><span class="tag">${esc(p.trade)}</span><span class="tag">${esc(p.zone)}</span>${ex}</div>`}
+    html+=`<div class="box"><span class="tag" style="background:#1b1f2a;color:#fff">Tu me interesa</span><div class="li" style="margin:6px 0">${thumb(p)}<div><h3 style="margin:0">${esc(p.name)}</h3><span class="tag">${esc(p.trade)}</span><span class="tag">${esc(p.zone)}</span></div></div>${l.job?`<p class="mu">Tu nota: ${esc(l.job)}</p>`:''}${ex}<div class="row" style="margin-top:10px"><button class="g s" data-vf="${l.autonomo_id}">Ver ficha</button><button class="no s" data-rm="${l.autonomo_id}">Quitar contacto</button></div></div>`}
   $('#v').innerHTML=html;
-  const ans=async(id,s)=>{await sb.from('likes').update({status:s}).eq('company_id',S.user.id).eq('autonomo_id',id);contactos()};
-  $('#v').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>ans(b.dataset.a,'accepted'));
-  $('#v').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>ans(b.dataset.d,'declined'));
+  $('#v').querySelectorAll('[data-vf]').forEach(b=>b.onclick=()=>{const p=data.find(l=>l.autonomo_id===b.dataset.vf).profiles;const o=modal(`<div class="card">${cardIn(p,true)}</div><button class="g" id="x" style="margin-top:12px">Cerrar</button>`,'l');$('#x').onclick=()=>o.remove()});
+  $('#v').querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{const o=modal(`<h2>¿Quitar este contacto?</h2><p>Dejará de aparecer aquí. Podrás volver a encontrarlo en Buscar.</p><button class="no" id="y">Sí, quitar</button><button class="g" id="c">No</button>`);$('#c').onclick=()=>o.remove();
+    $('#y').onclick=async()=>{const r=await sb.from('likes').delete().eq('company_id',S.user.id).eq('autonomo_id',b.dataset.rm);o.remove();if(r.error)return say(r.error.message+' (¿has ejecutado migracion-4.sql?)');contactos()}});
   $('#v').querySelectorAll('[data-r]').forEach(b=>b.onclick=async()=>{const id=b.dataset.r;
     const r=await sb.from('reviews').insert({company_id:S.user.id,autonomo_id:id,stars:+$(`[data-s="${id}"]`).value,comment:$(`[data-c="${id}"]`).value.trim()});
     if(r.error)return say(r.error.message);contactos()});

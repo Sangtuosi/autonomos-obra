@@ -95,3 +95,6 @@ create policy "likes responder" on likes for update to authenticated
 -- Perfil público para compartir por WhatsApp (el teléfono sigue privado)
 create policy "profiles publicos" on profiles for select to anon using (true);
 create policy "reviews publicas" on reviews for select to anon using (true);
+-- Pegar en Supabase > SQL Editor > Run (después de migracion-3.sql)
+alter table companies add column if not exists logo text default '';
+create policy "likes quitar" on likes for delete to authenticated using (company_id = auth.uid());
