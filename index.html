@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Obra Directa</title>
+<meta name="theme-color" content="#070b14">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg">
+<style>
+:root{--bg:#070b14;--card:#0f1626;--line:#1e2a44;--tx:#e8f0ff;--mu:#8a9bbd;--c1:#00e5ff;--c2:#7c4dff;--ok:#2cf5a0;--no:#ff5470}
+*{box-sizing:border-box;margin:0}
+body{background:radial-gradient(1200px 600px at 50% -10%,#14234a 0,var(--bg) 60%) fixed;color:var(--tx);font:16px/1.4 system-ui,sans-serif;min-height:100dvh}
+#app{max-width:520px;margin:auto;padding:16px 16px 90px}
+h1{font-size:28px;background:linear-gradient(90deg,var(--c1),var(--c2));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:20px;margin:6px 0 12px}
+.logo{display:flex;align-items:center;gap:10px;margin:8px 0 18px}
+.logo img{width:40px;animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{50%{filter:drop-shadow(0 0 12px var(--c1))}}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;animation:up .4s both}
+label{display:block;color:var(--mu);font-size:13px;margin:10px 0 4px}
+input,select,textarea{width:100%;background:#0a1020;border:1px solid var(--line);color:var(--tx);border-radius:12px;padding:12px;font:inherit}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--c1);box-shadow:0 0 0 3px #00e5ff22}
+button{font:inherit;border:0;border-radius:14px;padding:13px 16px;color:#04101c;font-weight:700;background:linear-gradient(90deg,var(--c1),var(--c2));cursor:pointer;transition:transform .15s,box-shadow .2s}
+button:active{transform:scale(.96)}
+button:hover{box-shadow:0 0 18px #00e5ff55}
+button.g{background:#16213a;color:var(--tx)}
+button.ok{background:var(--ok)}button.no{background:var(--no);color:#fff}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:8px;padding:10px;background:#070b14ee;backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+.tabs button{flex:1;max-width:160px;background:#16213a;color:var(--mu)}
+.tabs button.on{background:linear-gradient(90deg,var(--c1),var(--c2));color:#04101c}
+.deck{position:relative;height:540px;margin:6px 0 14px}
+.card{position:absolute;inset:0;background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden;touch-action:pan-y;user-select:none;box-shadow:0 10px 40px #0008}
+.card .ph{height:62%;background:#0a1020 center/cover;display:flex;align-items:flex-end}
+.card .ph.empty{align-items:center;justify-content:center;color:var(--mu);font-size:48px}
+.card .in{padding:14px 16px}
+.tag{display:inline-block;padding:3px 10px;border-radius:99px;background:#16213a;color:var(--c1);font-size:13px;margin:0 6px 6px 0}
+.stamp{position:absolute;top:20px;font-size:28px;font-weight:800;border:3px solid;border-radius:10px;padding:2px 10px;opacity:0}
+.stamp.l{left:18px;color:var(--ok);transform:rotate(-12deg)}.stamp.n{right:18px;color:var(--no);transform:rotate(12deg)}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap}.thumbs div{position:relative}
+.thumbs img{width:80px;height:80px;object-fit:cover;border-radius:12px}
+.thumbs b{position:absolute;top:2px;right:2px;background:#000a;color:#fff;border-radius:99px;width:22px;height:22px;text-align:center;cursor:pointer;font-size:14px}
+.mu{color:var(--mu);font-size:14px}.st{color:#ffc857}
+.msg{padding:10px 12px;border-radius:12px;background:#16213a;margin:10px 0;font-size:14px}
+a{color:var(--c1)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+const TRADES=['Albañil','Pintor','Fontanero','Electricista','Pladur','Alicatador','Carpintero','Yesero','Encofrador','Peón'];
+const $=s=>document.querySelector(s), app=$('#app');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const opts=(list,sel)=>list.map(t=>`<option ${t===sel?'selected':''}>${esc(t)}</option>`).join('');
+const stars=n=>n?`<span class="st">${'★'.repeat(Math.round(n))}${'☆'.repeat(5-Math.round(n))}</span> <span class="mu">${n.toFixed(1)}</span>`:'<span class="mu">Sin valoraciones todavía</span>';
+let sb,S={user:null,role:null,me:null,tab:null};
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+function logo(){return `<div class="logo"><img src="icon.svg" alt=""><h1>Obra Directa</h1></div>`}
+function say(t){const m=document.createElement('div');m.className='msg';m.textContent=t;(app.querySelector('.box')||app).prepend(m);setTimeout(()=>m.remove(),5000)}
+
+async function boot(){
+  if(!CFG.URL||!CFG.KEY){app.innerHTML=logo()+`<div class="box"><h2>Falta configurar</h2><p class="mu">Rellena config.js con la URL y la clave pública de Supabase.</p></div>`;return}
+  sb=supabase.createClient(CFG.URL,CFG.KEY);
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session)return authView();
+  S.user=session.user;await loadRole();
+}
+async function loadRole(){
+  const id=S.user.id,md=S.user.user_metadata||{};
+  let {data:p}=await sb.from('profiles').select('*').eq('id',id).maybeSingle();
+  if(p){S.role='a';S.me=p;S.tab='perfil';return nav()}
+  let {data:c}=await sb.from('companies').select('*').eq('id',id).maybeSingle();
+  if(c){S.role='e';S.me=c;S.tab='buscar';return nav()}
+  if(md.role==='e'){const r=await sb.from('companies').insert({id,name:md.name||'Mi empresa'}).select().single();S.role='e';S.me=r.data;S.tab='buscar'}
+  else{const r=await sb.from('profiles').insert({id,name:md.name||'Autónomo'}).select().single();S.role='a';S.me=r.data;S.tab='perfil'}
+  nav();
+}
+function authView(mode='in',role='a'){
+  app.innerHTML=logo()+`<div class="box"><h2>${mode==='in'?'Entrar':'Crear cuenta'}</h2>
+  ${mode==='up'?`<div class="row"><button class="${role==='a'?'':'g'}" id="ra">Soy autónomo</button><button class="${role==='e'?'':'g'}" id="re">Soy empresa</button></div>
+  <label>${role==='a'?'Tu nombre':'Nombre de la empresa'}</label><input id="nm">`:''}
+  <label>Correo</label><input id="em" type="email" autocomplete="email">
+  <label>Contraseña (mínimo 6)</label><input id="pw" type="password" autocomplete="${mode==='in'?'current-password':'new-password'}">
+  <div class="row" style="margin-top:14px"><button id="go">${mode==='in'?'Entrar':'Registrarme'}</button><button class="g" id="sw">${mode==='in'?'Crear cuenta':'Ya tengo cuenta'}</button></div></div>
+  <p class="mu">Encuentra autónomos de obra verificados en el Vallès, o ofrece tus servicios a empresas. Gratis para el autónomo.</p>`;
+  if(mode==='up'){$('#ra').onclick=()=>authView('up','a');$('#re').onclick=()=>authView('up','e')}
+  $('#sw').onclick=()=>authView(mode==='in'?'up':'in',role);
+  $('#go').onclick=async()=>{
+    const email=$('#em').value.trim(),password=$('#pw').value;
+    if(!email||password.length<6)return say('Escribe correo y una contraseña de 6 o más caracteres.');
+    let r;
+    if(mode==='in')r=await sb.auth.signInWithPassword({email,password});
+    else r=await sb.auth.signUp({email,password,options:{data:{role,name:$('#nm').value.trim()}}});
+    if(r.error)return say(r.error.message);
+    if(!r.data.session)return say('Cuenta creada. Revisa tu correo para confirmarla y luego entra.');
+    S.user=r.data.user;loadRole();
+  };
+}
+function nav(){
+  const t=S.role==='a'?[['perfil','Mi perfil'],['avisos','Avisos']]:[['buscar','Buscar'],['contactos','Contactos'],['empresa','Empresa']];
+  app.innerHTML=logo()+'<div id="v"></div><div class="tabs">'+t.map(([k,n])=>`<button class="${S.tab===k?'on':''}" data-k="${k}">${n}</button>`).join('')+'<button class="g" id="out">Salir</button></div>';
+  app.querySelectorAll('.tabs [data-k]').forEach(b=>b.onclick=()=>{S.tab=b.dataset.k;nav()});
+  $('#out').onclick=async()=>{await sb.auth.signOut();S={user:null};authView()};
+  ({perfil,avisos,buscar,contactos,empresa})[S.tab]();
+}
+async function getPhone(uid){const {data}=await sb.from('contacts').select('phone').eq('user_id',uid).maybeSingle();return data?.phone||''}
+
+async function perfil(){
+  const p=S.me,phone=await getPhone(S.user.id);
+  $('#v').innerHTML=`<div class="box"><h2>Tu mini currículum</h2>
+  <label>Nombre</label><input id="n" value="${esc(p.name)}">
+  <label>Oficio</label><select id="t">${opts(TRADES,p.trade)}</select>
+  <label>Zona</label><input id="z" value="${esc(p.zone)}">
+  <label>Años de experiencia</label><input id="y" type="number" min="0" max="60" value="${p.years||0}">
+  <label>Teléfono (solo lo ve quien aceptes)</label><input id="ph" type="tel" value="${esc(phone)}">
+  <label>Cuéntalo en pocas líneas</label><textarea id="b" rows="3" maxlength="400">${esc(p.bio)}</textarea>
+  <label><input id="av" type="checkbox" style="width:auto" ${p.available?'checked':''}> Disponible ahora</label>
+  <label>Fotos de tus trabajos</label><div class="thumbs" id="th"></div>
+  <input id="f" type="file" accept="image/*" multiple style="margin-top:8px">
+  <button id="sv" style="width:100%;margin-top:14px">Guardar</button></div>`;
+  const draw=()=>{$('#th').innerHTML=(S.me.photos||[]).map((u,i)=>`<div><img src="${esc(u)}" alt=""><b data-i="${i}">×</b></div>`).join('');
+    $('#th').querySelectorAll('b').forEach(b=>b.onclick=async()=>{const ph=[...S.me.photos];const [u]=ph.splice(+b.dataset.i,1);
+      const path=u.split('/fotos/')[1];if(path)await sb.storage.from('fotos').remove([path]);
+      await sb.from('profiles').update({photos:ph}).eq('id',S.user.id);S.me.photos=ph;draw()})};draw();
+  $('#f').onchange=async e=>{for(const f of e.target.files){
+      if((S.me.photos||[]).length>=8){say('Máximo 8 fotos.');break}
+      const blob=await shrink(f),path=`${S.user.id}/${Date.now()}.jpg`;
+      const up=await sb.storage.from('fotos').upload(path,blob,{contentType:'image/jpeg'});
+      if(up.error){say(up.error.message);continue}
+      const url=sb.storage.from('fotos').getPublicUrl(path).data.publicUrl;
+      const ph=[...(S.me.photos||[]),url];await sb.from('profiles').update({photos:ph}).eq('id',S.user.id);S.me.photos=ph;draw()}
+    e.target.value=''};
+  $('#sv').onclick=async()=>{
+    const row={name:$('#n').value.trim()||'Autónomo',trade:$('#t').value,zone:$('#z').value.trim()||'Vallès',years:+$('#y').value||0,bio:$('#b').value.trim(),available:$('#av').checked};
+    const a=await sb.from('profiles').update(row).eq('id',S.user.id);
+    const tel=$('#ph').value.trim();
+    const b=tel?await sb.from('contacts').upsert({user_id:S.user.id,phone:tel}):{};
+    if(a.error||b.error)return say((a.error||b.error).message);
+    Object.assign(S.me,row);say('Guardado.');
+  };
+}
+function shrink(file){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>{const m=900,k=Math.min(1,m/Math.max(i.width,i.height));
+  const c=document.createElement('canvas');c.width=i.width*k;c.height=i.height*k;c.getContext('2d').drawImage(i,0,0,c.width,c.height);
+  c.toBlob(b=>b?res(b):rej(),'image/jpeg',.75)};i.onerror=rej;i.src=URL.createObjectURL(file)})}
+
+async function avisos(){
+  const {data=[]}=await sb.from('likes').select('*, companies(name,rea)').eq('autonomo_id',S.user.id).order('created_at',{ascending:false});
+  let html='<div class="box"><h2>Empresas interesadas</h2>';
+  if(!data.length)html+='<p class="mu">Todavía nadie. Completa tu perfil con buenas fotos y marca que estás disponible.</p>';
+  for(const l of data){
+    const c=l.companies||{};let extra='';
+    if(l.status==='pending')extra=`<div class="row" style="margin-top:8px"><button class="ok" data-a="${l.company_id}">Aceptar</button><button class="no" data-d="${l.company_id}">Rechazar</button></div>`;
+    else if(l.status==='accepted'){const ph=await getPhone(l.company_id);extra=`<p style="margin-top:6px">Teléfono: ${ph?`<a href="tel:${esc(ph)}">${esc(ph)}</a>`:'<span class="mu">no lo ha puesto</span>'}</p>`}
+    else extra='<p class="mu">Rechazada</p>';
+    html+=`<div class="box" style="background:#0a1020"><b>${esc(c.name)}</b>${c.rea?` <span class="tag">REA ${esc(c.rea)}</span>`:''}<p class="mu">${esc(l.job||'Te ha marcado como interesante.')}</p>${extra}</div>`}
+  $('#v').innerHTML=html+'</div>';
+  const ans=async(id,s)=>{await sb.from('likes').update({status:s}).eq('company_id',id).eq('autonomo_id',S.user.id);avisos()};
+  $('#v').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>ans(b.dataset.a,'accepted'));
+  $('#v').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>ans(b.dataset.d,'declined'));
+}
+
+let F={trade:'Todos',zone:''};
+async function buscar(){
+  $('#v').innerHTML=`<div class="row"><select id="ft"><option>Todos</option>${opts(TRADES,F.trade)}</select><input id="fz" placeholder="Zona" value="${esc(F.zone)}"></div><div class="deck" id="dk"></div><div class="row" id="bt"><button class="no" id="skip">Pasar</button><button class="ok" id="like">Me gusta</button></div>`;
+  $('#ft').onchange=e=>{F.trade=e.target.value;buscar()};
+  $('#fz').onchange=e=>{F.zone=e.target.value.trim();buscar()};
+  const mine=(await sb.from('likes').select('autonomo_id').eq('company_id',S.user.id)).data||[];
+  const seen=new Set([...mine.map(m=>m.autonomo_id),...(S.skipped||[])]);
+  let q=sb.from('profiles').select('*').eq('available',true).limit(60);
+  if(F.trade!=='Todos')q=q.eq('trade',F.trade);
+  if(F.zone)q=q.ilike('zone','%'+F.zone+'%');
+  let list=((await q).data||[]).filter(p=>!seen.has(p.id));
+  const rv=(await sb.from('reviews').select('autonomo_id,stars').in('autonomo_id',list.map(p=>p.id))).data||[];
+  list.forEach(p=>{const r=rv.filter(x=>x.autonomo_id===p.id);p.avg=r.length?r.reduce((a,x)=>a+x.stars,0)/r.length:0;p.n=r.length});
+  const dk=$('#dk');
+  const act=async(like)=>{const p=list.shift();if(!p)return;
+    if(like){const r=await sb.from('likes').insert({company_id:S.user.id,autonomo_id:p.id,job:S.me.job||''});if(r.error)say(r.error.message)}
+    else(S.skipped=S.skipped||[]).push(p.id);show()};
+  function show(){
+    const p=list[0];
+    if(!p){dk.innerHTML='<div class="box"><h2>No hay más perfiles</h2><p class="mu">Prueba otro oficio o zona. Estamos empezando y entran autónomos nuevos cada semana.</p></div>';$('#bt').style.display='none';return}
+    $('#bt').style.display='';
+    dk.innerHTML=`<div class="card" id="cd">${p.photos?.[0]?`<div class="ph" style="background-image:url('${esc(p.photos[0])}')"></div>`:'<div class="ph empty">🛠</div>'}
+    <div class="in"><h2>${esc(p.name)}</h2><span class="tag">${esc(p.trade)}</span><span class="tag">${esc(p.zone)}</span><span class="tag">${p.years||0} años</span>
+    <p>${stars(p.avg)}${p.n?` <span class="mu">(${p.n})</span>`:''}</p><p class="mu" style="margin-top:6px">${esc((p.bio||'').slice(0,140))}</p></div>
+    <div class="stamp l">ME GUSTA</div><div class="stamp n">PASO</div></div>`;
+    const cd=$('#cd');let x0=null,dx=0;
+    cd.onpointerdown=e=>{x0=e.clientX;cd.setPointerCapture(e.pointerId)};
+    cd.onpointermove=e=>{if(x0===null)return;dx=e.clientX-x0;cd.style.transform=`translateX(${dx}px) rotate(${dx/20}deg)`;
+      cd.querySelector('.l').style.opacity=Math.max(0,dx/100);cd.querySelector('.n').style.opacity=Math.max(0,-dx/100)};
+    cd.onpointerup=()=>{if(x0===null)return;x0=null;if(Math.abs(dx)>100){const l=dx>0;cd.style.transition='transform .25s,opacity .25s';cd.style.transform=`translateX(${l?600:-600}px)`;cd.style.opacity=0;setTimeout(()=>act(l),220)}
+      else{cd.style.transition='transform .2s';cd.style.transform='';cd.querySelector('.l').style.opacity=cd.querySelector('.n').style.opacity=0;setTimeout(()=>cd.style.transition='',200)}dx=0};
+  }
+  $('#like').onclick=()=>act(true);$('#skip').onclick=()=>act(false);show();
+}
+
+async function contactos(){
+  const {data=[]}=await sb.from('likes').select('*, profiles(name,trade,zone)').eq('company_id',S.user.id).order('created_at',{ascending:false});
+  const rv=(await sb.from('reviews').select('autonomo_id').eq('company_id',S.user.id)).data||[];
+  const done=new Set(rv.map(r=>r.autonomo_id));
+  let html='<div class="box"><h2>Tus me gusta</h2>';
+  if(!data.length)html+='<p class="mu">Aún no has marcado a nadie. Ve a Buscar.</p>';
+  for(const l of data){const p=l.profiles||{};let ex='';
+    if(l.status==='pending')ex='<p class="mu">Esperando respuesta…</p>';
+    else if(l.status==='declined')ex='<p class="mu">No disponible</p>';
+    else{const ph=await getPhone(l.autonomo_id);ex=`<p>Teléfono: ${ph?`<a href="tel:${esc(ph)}">${esc(ph)}</a>`:'<span class="mu">no lo ha puesto</span>'}</p>`;
+      ex+=done.has(l.autonomo_id)?'<p class="mu">Ya lo has valorado.</p>':`<div class="row" style="margin-top:6px"><select data-s="${l.autonomo_id}"><option value="5">5 ★</option><option value="4">4 ★</option><option value="3">3 ★</option><option value="2">2 ★</option><option value="1">1 ★</option></select><input data-c="${l.autonomo_id}" placeholder="Comentario"><button data-r="${l.autonomo_id}">Valorar</button></div>`}
+    html+=`<div class="box" style="background:#0a1020"><b>${esc(p.name)}</b> <span class="tag">${esc(p.trade)}</span>${ex}</div>`}
+  $('#v').innerHTML=html+'</div>';
+  $('#v').querySelectorAll('[data-r]').forEach(b=>b.onclick=async()=>{const id=b.dataset.r;
+    const r=await sb.from('reviews').insert({company_id:S.user.id,autonomo_id:id,stars:+$(`[data-s="${id}"]`).value,comment:$(`[data-c="${id}"]`).value.trim()});
+    if(r.error)return say(r.error.message);contactos()});
+}
+
+async function empresa(){
+  const c=S.me,phone=await getPhone(S.user.id);
+  $('#v').innerHTML=`<div class="box"><h2>Tu empresa</h2>
+  <label>Nombre</label><input id="n" value="${esc(c.name)}">
+  <label>Número de REA (Registro de Empresas Acreditadas)</label><input id="r" value="${esc(c.rea)}">
+  <label>Teléfono (solo lo ven los autónomos que acepten)</label><input id="ph" type="tel" value="${esc(phone)}">
+  <button id="sv" style="width:100%;margin-top:14px">Guardar</button>
+  <p class="mu" style="margin-top:10px">Esta web solo pone en contacto. La contratación, el pago y las condiciones son entre empresa y autónomo.</p></div>`;
+  $('#sv').onclick=async()=>{const row={name:$('#n').value.trim()||'Mi empresa',rea:$('#r').value.trim()};
+    const a=await sb.from('companies').update(row).eq('id',S.user.id);const tel=$('#ph').value.trim();
+    const b=tel?await sb.from('contacts').upsert({user_id:S.user.id,phone:tel}):{};
+    if(a.error||b.error)return say((a.error||b.error).message);Object.assign(S.me,row);say('Guardado.')};
+}
+boot();
+</script>
+</body>
+</html>
