@@ -53,6 +53,7 @@ button.w{width:100%}button.s{padding:8px 14px;font-size:14px;border-radius:11px}
 .tabs button i{font-style:normal;font-size:19px}.tabs button.on{background:var(--or);color:#fff}
 .bar{height:10px;border-radius:9px;background:#f4e7da;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:repeating-linear-gradient(-45deg,var(--or) 0 10px,var(--or2) 10px 20px);border-radius:9px;transition:width .5s}
 .todo{font-size:14px;color:var(--mu);display:flex;flex-wrap:wrap;gap:6px 14px}.todo .d{color:var(--ok);font-weight:700}
+.card h4{font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--mu);margin:12px 0 5px}
 .rate{display:flex;justify-content:space-between;align-items:center;background:var(--soft);border:1.5px solid var(--or);border-radius:14px;padding:10px 14px;margin:6px 0 8px}.rate span{color:var(--mu);font-size:14px;font-weight:600}.rate b{color:var(--or);font-size:20px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
 .stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 6px;text-align:center;animation:up .4s both}.stat b{display:block;font-size:26px;color:var(--or);line-height:1.1}.stat span{font-size:12px;color:var(--mu)}
@@ -205,7 +206,8 @@ function cardIn(p,strip){const ph=p.photos||[];
   `<div class="in"><h2 style="margin-bottom:6px">${esc(p.name)}</h2><span class="tag">${esc(p.trade)}</span><span class="tag">${esc(p.zone)}</span><span class="tag">${p.years||0} años</span>
   <div class="rate"><span>💶 Tarifa</span><b>${p.rate?esc(/^\d+([.,]\d+)?$/.test(p.rate.trim())?p.rate.trim()+' €/hora':p.rate):'A convenir'}</b></div>
   <p style="margin:2px 0 6px">${stars(p.avg)}${p.n?` <span class="mu">(${p.n})</span>`:''}</p>${badges(p)}
-  <p class="mu" style="margin-top:4px">${esc([...(p.skills||[]),p.skills_extra].filter(Boolean).join(' · '))}</p>${p.bio?`<p style="margin-top:6px;font-size:14px">${esc(p.bio)}</p>`:''}${p.work_notes?`<p class="mu" style="margin-top:4px">${esc(p.work_notes)}</p>`:''}</div>`}
+  ${(p.skills||[]).length||p.skills_extra?`<h4>Sabe hacer</h4>${(p.skills||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}${p.skills_extra?`<p style="font-size:14px">${esc(p.skills_extra)}</p>`:''}`:''}
+  ${p.bio?`<h4>Sobre mí</h4><p style="font-size:14px">${esc(p.bio)}</p>`:''}${p.work_notes?`<h4>Cómo trabajo</h4><p style="font-size:14px">${esc(p.work_notes)}</p>`:''}</div>`}
 async function preview(){const p={...S.me};await enrich([p]);
   const o=modal(`<span class="tag" style="background:#1b1f2a;color:#fff">Así te ve una empresa</span><div class="card" style="margin-top:8px">${cardIn(p,true)}</div><button class="g" id="x" style="margin-top:12px">Cerrar</button>`,'l');$('#x').onclick=()=>o.remove()}
 function share(){const url=location.origin+location.pathname+'?p='+S.user.id,txt='Mira mi perfil de autónomo en Obra Directa';
