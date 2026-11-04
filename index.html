@@ -264,8 +264,8 @@ function cardIn(p,strip){const ph=p.photos||[];
 async function preview(){const p={...S.me};await enrich([p]);
   const o=modal(`<span class="tag" style="background:#1b1f2a;color:#fff">Así te ve una empresa</span><div class="card" style="margin-top:8px">${cardIn(p,true)}</div><button class="g" id="x" style="margin-top:12px">Cerrar</button>`,'l');$('#x').onclick=()=>o.remove()}
 async function share(){
-  const url=location.origin+location.pathname+'?p='+S.user.id,txt='Mira mi perfil de autónomo en '+BRAND+': '+(S.me.name||'')+', '+(S.me.trade||'').toLowerCase()+' en '+(S.me.zone||'')+'.\n'+url;
-  const u=(S.me.photos||[])[0];
+  const url=(CFG.SHARE||location.origin+location.pathname)+'?p='+S.user.id,txt='Mira mi perfil de autónomo en '+BRAND+': '+(S.me.name||'')+', '+(S.me.trade||'').toLowerCase()+' en '+(S.me.zone||'')+'.\n'+url;
+  const u=CFG.SHARE?null:(S.me.photos||[])[0];
   try{if(u&&navigator.canShare){const b=await (await fetch(u)).blob(),f=new File([b],'perfil.jpg',{type:b.type||'image/jpeg'});
     if(navigator.canShare({files:[f]})){await navigator.share({files:[f],text:txt});return}}}catch(e){if(e&&e.name==='AbortError')return}
   if(navigator.share){navigator.share({text:txt}).catch(()=>{});return}
