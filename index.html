@@ -53,6 +53,7 @@ button.w{width:100%}button.s{padding:8px 14px;font-size:14px;border-radius:11px}
 .tabs button i{font-style:normal;font-size:19px}.tabs button.on{background:var(--or);color:#fff}
 .bar{height:10px;border-radius:9px;background:#f4e7da;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:repeating-linear-gradient(-45deg,var(--or) 0 10px,var(--or2) 10px 20px);border-radius:9px;transition:width .5s}
 .todo{font-size:14px;color:var(--mu);display:flex;flex-wrap:wrap;gap:6px 14px}.todo .d{color:var(--ok);font-weight:700}
+.rate{display:flex;justify-content:space-between;align-items:center;background:var(--soft);border:1.5px solid var(--or);border-radius:14px;padding:10px 14px;margin:6px 0 8px}.rate span{color:var(--mu);font-size:14px;font-weight:600}.rate b{color:var(--or);font-size:20px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
 .stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 6px;text-align:center;animation:up .4s both}.stat b{display:block;font-size:26px;color:var(--or);line-height:1.1}.stat span{font-size:12px;color:var(--mu)}
 .deck{position:relative;height:600px;margin:10px 0 14px}
@@ -195,12 +196,14 @@ function progress(items){const d=items.filter(i=>i[1]).length,p=Math.round(d/ite
   return `<div class="box or"><h2>${p===100?'Perfil completo 🎉':'Completa tu perfil ('+p+'%)'}</h2><div class="bar"><i style="width:${p}%"></i></div><div class="todo">${items.map(i=>`<span class="${i[1]?'d':''}">${i[1]?'✓':'○'} ${i[0]}</span>`).join('')}</div></div>`}
 const progA=()=>progress([['3 fotos o más',(S.me.photos||[]).length>=3],['Oficio',!!S.me.trade],['Qué sabes hacer',(S.me.skills||[]).length>0],['Presentación',(S.me.bio||'').length>20],['Teléfono',!!S.phone]]);
 const progE=()=>progress([['Nombre',!!S.me.name],['A quién buscas',(S.me.looking_for||[]).length>0],['Trabajo que ofreces',(S.me.job||'').length>10],['REA',!!S.me.rea],['Teléfono',!!S.phone]]);
+const thumb=p=>{const u=(p.photos||[])[0];return `<div class="im">${u?`<img src="${esc(u)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:14px" onerror="this.replaceWith('🛠')">`:'🛠'}</div>`};
 async function enrich(list){if(!list.length)return list;const rv=(await sb.from('reviews').select('autonomo_id,stars').in('autonomo_id',list.map(p=>p.id))).data||[];
   list.forEach(p=>{const r=rv.filter(x=>x.autonomo_id===p.id);p.avg=r.length?r.reduce((a,x)=>a+x.stars,0)/r.length:0;p.n=r.length});return list}
 const badges=p=>[p.registered&&'De alta',p.insured&&'Con seguro',p.tpc&&'Tarjeta TPC',p.prl&&'Curso PRL',p.vehicle&&p.vehicle!=='Sin vehículo'&&p.vehicle,p.tools&&p.tools!=='No tengo'&&('Herramienta '+p.tools.toLowerCase())].filter(Boolean).map(t=>`<span class="tag b">${esc(t)}</span>`).join('');
 function cardIn(p,strip){const ph=p.photos||[];
-  return (strip?(ph.length?`<div class="strip">${ph.map(u=>`<img src="${esc(u)}" alt="">`).join('')}</div>`:`<div class="ph">🛠</div>`):'')+
-  `<div class="in"><h2 style="margin-bottom:6px">${esc(p.name)}</h2><span class="tag">${esc(p.trade)}</span><span class="tag">${esc(p.zone)}</span><span class="tag">${p.years||0} años</span>${p.rate?`<span class="tag">${esc(p.rate)}</span>`:''}
+  return (strip?(ph.length?`<div class="strip">${ph.map(u=>`<img src="${esc(u)}" alt="">`).join('')}</div>`:`<div class="ph" style="flex-direction:column;font-size:15px;color:var(--mu)"><span style="font-size:54px">🛠</span>Sin fotos todavía</div>`):'')+
+  `<div class="in"><h2 style="margin-bottom:6px">${esc(p.name)}</h2><span class="tag">${esc(p.trade)}</span><span class="tag">${esc(p.zone)}</span><span class="tag">${p.years||0} años</span>
+  <div class="rate"><span>💶 Tarifa</span><b>${p.rate?esc(p.rate):'A convenir'}</b></div>
   <p style="margin:2px 0 6px">${stars(p.avg)}${p.n?` <span class="mu">(${p.n})</span>`:''}</p>${badges(p)}
   <p class="mu" style="margin-top:4px">${esc([...(p.skills||[]),p.skills_extra].filter(Boolean).join(' · '))}</p>${p.bio?`<p style="margin-top:6px;font-size:14px">${esc(p.bio)}</p>`:''}${p.work_notes?`<p class="mu" style="margin-top:4px">${esc(p.work_notes)}</p>`:''}</div>`}
 async function preview(){const p={...S.me};await enrich([p]);
@@ -339,7 +342,7 @@ async function companeros(){
   let h=`<h2>Compañeros de ${esc(S.me.trade.toLowerCase())}</h2>`;
   if(!list.length)h+=`<div class="box or"><h3>Aún no hay más perfiles de tu oficio</h3><p class="mu">Invita a compañeros a unirse. Cuantos más perfiles, más empresas vendrán.</p></div>`;
   else h+=`<div class="box or"><h3>Comparado contigo</h3><p class="mu">Los perfiles de tu oficio tienen de media ${ph.toFixed(1)} fotos. Tú tienes ${(S.me.photos||[]).length}.</p></div>`;
-  h+=list.map((p,i)=>`<div class="box"><div class="li"><div class="im" style="${(p.photos||[])[0]?`background-image:url('${esc(p.photos[0])}')`:''}">${(p.photos||[])[0]?'':'🛠'}</div><div><b>${esc(p.name)}</b><br><span class="mu">${esc(p.zone)} · ${p.years||0} años · ${(p.photos||[]).length} fotos</span><br>${stars(p.avg)}</div><button class="g s" data-o="${i}">Ver</button></div></div>`).join('');
+  h+=list.map((p,i)=>`<div class="box"><div class="li">${thumb(p)}<div><b>${esc(p.name)}</b><br><span class="mu">${esc(p.zone)} · ${p.years||0} años · ${(p.photos||[]).length} fotos</span><br>${stars(p.avg)}</div><button class="g s" data-o="${i}">Ver</button></div></div>`).join('');
   $('#v').innerHTML=h;
   $('#v').querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{const o=modal(`<div class="card">${cardIn(list[+b.dataset.o],true)}</div><button class="g" id="x" style="margin-top:12px">Cerrar</button>`,'l');$('#x').onclick=()=>o.remove()});
 }
@@ -357,7 +360,7 @@ async function buscar(){
   const res=$('#res');
   if(!list.length){res.innerHTML=`<div class="box or"><h3>No hay más perfiles ahora mismo</h3><p class="mu">Prueba otro oficio o quita la zona. Entran autónomos nuevos cada semana.</p></div>`;return}
   if(F.view==='list'){
-    res.innerHTML=list.map((p,i)=>`<div class="box"><div class="li"><div class="im" style="${(p.photos||[])[0]?`background-image:url('${esc(p.photos[0])}')`:''}">${(p.photos||[])[0]?'':'🛠'}</div><div><b>${esc(p.name)}</b> <span class="tag">${esc(p.trade)}</span><br><span class="mu">${esc(p.zone)} · ${p.years||0} años</span><br>${stars(p.avg)}</div></div><div class="row" style="margin-top:10px"><button class="g s" data-v="${i}">Ver perfil</button><button class="s" data-l="${i}">Me interesa</button></div></div>`).join('');
+    res.innerHTML=list.map((p,i)=>`<div class="box"><div class="li">${thumb(p)}<div><b>${esc(p.name)}</b> <span class="tag">${esc(p.trade)}</span><br><span class="mu">${esc(p.zone)} · ${p.years||0} años · ${(p.photos||[]).length} fotos</span><br>${stars(p.avg)}</div></div><div class="row" style="margin-top:10px"><button class="g s" data-v="${i}">Ver perfil</button><button class="s" data-l="${i}">Me interesa</button></div></div>`).join('');
     res.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{const o=modal(`<div class="card">${cardIn(list[+b.dataset.v],true)}</div><button class="g" id="x" style="margin-top:12px">Cerrar</button>`,'l');$('#x').onclick=()=>o.remove()});
     res.querySelectorAll('[data-l]').forEach(b=>b.onclick=async()=>{await like(list[+b.dataset.l],true);buscar()});return}
   res.innerHTML=`<div class="deck" id="dk"></div><div class="row" id="bt"><button class="no" id="skip">✕ Pasar</button><button class="ok" id="like">♥ Me interesa</button></div>`;
