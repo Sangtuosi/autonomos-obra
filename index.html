@@ -62,7 +62,7 @@ button.w{width:100%}button.s{padding:8px 14px;font-size:14px;border-radius:11px}
 .card .ph{height:300px;background:#fff4ea center/cover;position:relative;display:flex;align-items:center;justify-content:center;font-size:54px}
 .card .dots{position:absolute;top:10px;left:0;right:0;display:flex;gap:4px;padding:0 12px}.dots i{flex:1;height:4px;border-radius:4px;background:#ffffff88}.dots i.on{background:#fff}
 .card .in{padding:14px 16px}
-.strip{display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x mandatory;height:230px;background:var(--soft)}.strip img{height:100%;scroll-snap-align:start;flex:none;max-width:92%;object-fit:cover}
+.strip{display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x mandatory;height:230px;background:var(--soft)}.strip img{height:100%;width:88%;scroll-snap-align:start;flex:none;object-fit:cover;object-position:center 25%}.strip.one img{width:100%}
 .stamp{position:absolute;top:24px;font-size:26px;font-weight:900;border:4px solid;border-radius:12px;padding:2px 12px;opacity:0;background:#fffc}
 .stamp.l{left:18px;color:var(--ok);transform:rotate(-12deg)}.stamp.n{right:18px;color:var(--no);transform:rotate(12deg)}
 .thumbs{display:flex;gap:8px;flex-wrap:wrap}.thumbs div{position:relative}
@@ -201,9 +201,9 @@ async function enrich(list){if(!list.length)return list;const rv=(await sb.from(
   list.forEach(p=>{const r=rv.filter(x=>x.autonomo_id===p.id);p.avg=r.length?r.reduce((a,x)=>a+x.stars,0)/r.length:0;p.n=r.length});return list}
 const badges=p=>[p.registered&&'De alta',p.insured&&'Con seguro',p.tpc&&'Tarjeta TPC',p.prl&&'Curso PRL',p.vehicle&&p.vehicle!=='Sin vehículo'&&p.vehicle,p.tools&&p.tools!=='No tengo'&&('Herramienta '+p.tools.toLowerCase())].filter(Boolean).map(t=>`<span class="tag b">${esc(t)}</span>`).join('');
 function cardIn(p,strip){const ph=p.photos||[];
-  return (strip?(ph.length?`<div class="strip">${ph.map(u=>`<img src="${esc(u)}" alt="">`).join('')}</div>`:`<div class="ph" style="flex-direction:column;font-size:15px;color:var(--mu)"><span style="font-size:54px">🛠</span>Sin fotos todavía</div>`):'')+
+  return (strip?(ph.length?`<div class="strip ${ph.length===1?'one':''}">${ph.map(u=>`<img src="${esc(u)}" alt="">`).join('')}</div>`:`<div class="ph" style="flex-direction:column;font-size:15px;color:var(--mu)"><span style="font-size:54px">🛠</span>Sin fotos todavía</div>`):'')+
   `<div class="in"><h2 style="margin-bottom:6px">${esc(p.name)}</h2><span class="tag">${esc(p.trade)}</span><span class="tag">${esc(p.zone)}</span><span class="tag">${p.years||0} años</span>
-  <div class="rate"><span>💶 Tarifa</span><b>${p.rate?esc(p.rate):'A convenir'}</b></div>
+  <div class="rate"><span>💶 Tarifa</span><b>${p.rate?esc(/^\d+([.,]\d+)?$/.test(p.rate.trim())?p.rate.trim()+' €/hora':p.rate):'A convenir'}</b></div>
   <p style="margin:2px 0 6px">${stars(p.avg)}${p.n?` <span class="mu">(${p.n})</span>`:''}</p>${badges(p)}
   <p class="mu" style="margin-top:4px">${esc([...(p.skills||[]),p.skills_extra].filter(Boolean).join(' · '))}</p>${p.bio?`<p style="margin-top:6px;font-size:14px">${esc(p.bio)}</p>`:''}${p.work_notes?`<p class="mu" style="margin-top:4px">${esc(p.work_notes)}</p>`:''}</div>`}
 async function preview(){const p={...S.me};await enrich([p]);
