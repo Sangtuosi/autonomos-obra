@@ -58,3 +58,17 @@ create policy "fotos subir" on storage.objects for insert to authenticated
   with check (bucket_id = 'fotos' and (storage.foldername(name))[1] = auth.uid()::text);
 create policy "fotos borrar" on storage.objects for delete to authenticated
   using (bucket_id = 'fotos' and (storage.foldername(name))[1] = auth.uid()::text);
+-- Pegar en Supabase > SQL Editor > Run (añade campos nuevos a los perfiles)
+alter table profiles
+  add column if not exists skills text[] default '{}',
+  add column if not exists rate text default '',
+  add column if not exists registered boolean default false,
+  add column if not exists insured boolean default false,
+  add column if not exists has_van boolean default false,
+  add column if not exists own_tools boolean default false;
+alter table companies
+  add column if not exists kind text default 'Constructora',
+  add column if not exists zone text default 'Vallès',
+  add column if not exists looking_for text[] default '{}',
+  add column if not exists job text default '',
+  add column if not exists about text default '';
