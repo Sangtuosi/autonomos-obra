@@ -17,11 +17,11 @@ export default {
       p = Array.isArray(rows) ? rows[0] : null;
     } catch (e) {}
     const dest = `${SITE}?p=${id}`;
-    const title = p ? `${p.name} · ${p.trade} en ${p.zone}` : 'Obra Directa';
+    const title = p ? `${p.name} · ${p.trade} en ${p.zone}` : 'Trowel';
     const desc = p ? `${p.years || 0} años de experiencia. ${(p.bio || 'Mira su perfil con fotos de trabajos.').slice(0, 140)}` : 'Autónomos de obra, sin intermediarios.';
     const img = (p && p.photos && p.photos[0]) || SITE + 'icon-512.png';
     const html = `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${esc(title)}</title>
-<meta property="og:type" content="profile"><meta property="og:site_name" content="Obra Directa">
+<meta property="og:type" content="profile"><meta property="og:site_name" content="Trowel">
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}">
 <meta property="og:image" content="${esc(img)}"><meta property="og:url" content="${esc(dest)}">
 <meta name="twitter:card" content="summary_large_image"><meta name="description" content="${esc(desc)}">
