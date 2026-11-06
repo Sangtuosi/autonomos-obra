@@ -147,7 +147,7 @@ const yn=(id,v)=>`<div id="${id}">${chips(['Sí','No'],[v?'Sí':'No'])}</div>`;
 const isY=id=>picked($('#'+id))[0]==='Sí';
 function bindChips(el,single,cb){el.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{if(single)el.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));c.classList.toggle('on',single?true:!c.classList.contains('on'));cb&&cb()})}
 function bindYN(...ids){ids.forEach(i=>bindChips($('#'+i),true))}
-let sb,S={user:null,role:null,me:null,tab:null},F={trade:'Todos',zone:'',view:'cards'};
+let sb,S={user:null,role:null,me:null,tab:null},F={trade:'Todos',zone:'',view:'cards',km:0};
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 const CONE=`<svg viewBox="0 0 100 120"><ellipse cx="50" cy="112" rx="44" ry="7" fill="#1b1f2a22"/><rect x="6" y="96" width="88" height="14" rx="4" fill="#1b1f2a"/><path d="M38 12h24l22 84H16z" fill="#ff6a00"/><path d="M33 34h34l4 15H29z M26 60h48l4 16H22z" fill="#fff"/><rect x="38" y="8" width="24" height="8" rx="4" fill="#ff8f3d"/></svg>`;
 const HERO=`<svg viewBox="0 0 400 210" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe3cc"/><stop offset="1" stop-color="#fff4ea"/></linearGradient></defs><rect width="400" height="210" fill="url(#sk)"/><circle cx="330" cy="52" r="26" fill="#ffb27a" opacity=".7"/><g fill="#f3d3b8"><rect x="20" y="96" width="46" height="94"/><rect x="72" y="70" width="40" height="120"/><rect x="300" y="88" width="44" height="102"/><rect x="350" y="110" width="40" height="80"/></g><g fill="#1b1f2a"><rect x="150" y="60" width="96" height="130" rx="2"/></g><g fill="#ff8f3d">${Array.from({length:12},(_,i)=>`<rect x="${160+(i%3)*28}" y="${72+Math.floor(i/3)*28}" width="18" height="16" rx="2"/>`).join('')}</g><rect x="146" y="56" width="104" height="10" fill="#ff6a00"/><g stroke="#1b1f2a" stroke-width="4" fill="none"><path d="M262 190V24M262 30h110M262 30l-60 0M262 60l30-30M262 30l40 30"/></g><path d="M352 30v40" stroke="#1b1f2a" stroke-width="2"/><rect x="340" y="70" width="24" height="14" fill="#ff6a00"/><rect x="200" y="22" width="12" height="16" fill="#1b1f2a"/><rect x="0" y="188" width="400" height="22" fill="#1b1f2a"/><g fill="#ff6a00"><path d="M60 188l8-28h8l8 28z"/><path d="M110 188l8-28h8l8 28z"/></g><g fill="#fff"><rect x="66" y="168" width="12" height="4"/><rect x="116" y="168" width="12" height="4"/></g><g fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="14 10"><path d="M0 199h400"/></g></svg>`;
@@ -170,7 +170,7 @@ async function boot(){
 async function loadRole(quiet){
   const id=S.user.id,md=S.user.user_metadata||{};
   let {data:p}=await sb.from('profiles').select('*').eq('id',id).maybeSingle();
-  if(p){S.role='a';S.me=p;S.tab='inicio';return quiet||go()}
+  if(p){S.role='a';S.me=p;S.tab='inicio';if(p.lat===null&&p.zone&&!/toda espa/i.test(p.zone))geocode(p.zone).then(g=>{if(g)sb.from('profiles').update({lat:g.lat,lng:g.lng}).eq('id',id).then(()=>{})});return quiet||go()}
   let {data:c}=await sb.from('companies').select('*').eq('id',id).maybeSingle();
   if(c){S.role='e';S.me=c;S.tab='inicio';return quiet||go()}
   let pr='',pn='';try{pr=localStorage.getItem('pendRole')||'';pn=localStorage.getItem('pendName')||'';localStorage.removeItem('pendRole');localStorage.removeItem('pendName')}catch(e){}
@@ -367,7 +367,7 @@ async function perfil(){
       await sb.from('profiles').update({photos:ph}).eq('id',S.user.id);S.me.photos=ph;draw();$('#pg').innerHTML=progA()}e.target.value=''};
   $('#sv').onclick=async()=>{
     const row={name:$('#n').value.trim()||'Autónomo',trade:picked($('#tr'))[0]||'Albañil',zone:$('#z').value.trim()||'Toda España',years:+$('#y').value||0,bio:$('#b').value.trim(),skills:picked($('#sk')),skills_extra:$('#sx').value.trim(),rate:$('#r').value.trim(),registered:isY('rg'),insured:isY('ins'),tpc:isY('tpc'),prl:isY('prl'),vehicle:picked($('#vh'))[0]||'',tools:picked($('#tl'))[0]||'',work_notes:$('#wn').value.trim(),available:isY('av')};
-    const a=await sb.from('profiles').update(row).eq('id',S.user.id);const tel=$('#ph').value.trim();
+    const g=await geocode(row.zone);row.lat=g?g.lat:null;row.lng=g?g.lng:null;let a=await sb.from('profiles').update(row).eq('id',S.user.id);if(a.error&&/lat|lng/.test(a.error.message)){delete row.lat;delete row.lng;a=await sb.from('profiles').update(row).eq('id',S.user.id)}const tel=$('#ph').value.trim();
     const b=tel?await sb.from('contacts').upsert({user_id:S.user.id,phone:tel}):{};
     if(a.error||b.error)return say((a.error||b.error).message+' (¿has ejecutado migracion-3.sql?)');
     Object.assign(S.me,row);S.phone=tel;$('#pg').innerHTML=progA();
@@ -443,18 +443,43 @@ async function companeros(){
 
 function askNote(p){return new Promise(res=>{const o=modal(`<h2>Me interesa ${esc((p.name||'').split(' ')[0])}</h2><p>Si quieres, añade una nota corta para que sepa de qué se trata.</p><textarea id="nt" rows="3" maxlength="200" placeholder="Ej: Reforma de baño en Sabadell. Empezamos el día 15."></textarea><button id="n1" style="margin-top:12px">Enviar</button><button class="g" id="n2">Enviar sin nota</button><button class="g" id="n3">Cancelar</button>`);
   o.onclick=e=>{if(e.target===o){o.remove();res(null)}};$('#n1').onclick=()=>{const v=$('#nt').value.trim();o.remove();res(v)};$('#n2').onclick=()=>{o.remove();res('')};$('#n3').onclick=()=>{o.remove();res(null)}})}
+const GEO={};
+async function geocode(q){q=(q||'').split(',')[0].trim();if(!q||/toda espa/i.test(q))return null;if(GEO[q]!==undefined)return GEO[q];
+  try{const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=es&q='+encodeURIComponent(q));const j=await r.json();GEO[q]=j[0]?{lat:+j[0].lat,lng:+j[0].lon}:null}catch(e){GEO[q]=null}return GEO[q]}
+const kmDist=(a,b)=>{const t=x=>x*Math.PI/180,dl=t(b.lat-a.lat),dn=t(b.lng-a.lng),h=Math.sin(dl/2)**2+Math.cos(t(a.lat))*Math.cos(t(b.lat))*Math.sin(dn/2)**2;return 12742*Math.asin(Math.sqrt(h))};
+function leafletLoad(){return new Promise((ok,no)=>{if(window.L)return ok();const l=document.createElement('link');l.rel='stylesheet';l.href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';document.head.appendChild(l);const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';sc.onload=ok;sc.onerror=no;document.head.appendChild(sc)})}
+const jit=id=>{let h=0;for(const c of String(id))h=(h*31+c.charCodeAt(0))>>>0;return [((h%1000)/1000-.5)*.012,(((h>>10)%1000)/1000-.5)*.012]};
 async function buscar(){
-  $('#v').innerHTML=`<div id="ft">${chips(['Todos',...TRADES],[F.trade])}</div><div class="row" style="margin:10px 0"><input id="fz" list="zonas" placeholder="Zona (ej: Sevilla)" value="${esc(F.zone)}"><div id="vw">${chips(['Tarjetas','Lista'],[F.view==='cards'?'Tarjetas':'Lista'])}</div></div><div id="res"></div>`;
-  bindChips($('#ft'),true,()=>{F.trade=picked($('#ft'))[0]||'Todos';buscar()});bindChips($('#vw'),true,()=>{F.view=picked($('#vw'))[0]==='Lista'?'list':'cards';buscar()});
+  $('#v').innerHTML=`<div id="ft">${chips(['Todos',...TRADES],[F.trade])}</div><div class="row" style="margin:10px 0"><input id="fz" list="zonas" placeholder="Zona (ej: Sevilla)" value="${esc(F.zone)}"><div id="vw">${chips(['Tarjetas','Lista','Mapa'],[F.view==='map'?'Mapa':F.view==='list'?'Lista':'Tarjetas'])}</div></div>${F.zone?`<div id="kmc" style="margin-bottom:10px">${chips(['Cualquier distancia','10 km','30 km','50 km','100 km'],[F.km?F.km+' km':'Cualquier distancia'])}</div>`:''}<div id="res"></div>`;
+  bindChips($('#ft'),true,()=>{F.trade=picked($('#ft'))[0]||'Todos';buscar()});bindChips($('#vw'),true,()=>{const v=picked($('#vw'))[0];F.view=v==='Lista'?'list':v==='Mapa'?'map':'cards';buscar()});
+  if($('#kmc'))bindChips($('#kmc'),true,()=>{F.km=parseInt(picked($('#kmc'))[0])||0;buscar()});
   $('#fz').onchange=e=>{F.zone=e.target.value.trim();buscar()};
   const mine=(await sb.from('likes').select('autonomo_id').eq('company_id',S.user.id)).data||[];
   const seen=new Set([...mine.map(m=>m.autonomo_id),...(S.skipped||[])]);
-  let q=sb.from('profiles').select('*').eq('available',true).limit(60);
-  if(F.trade!=='Todos')q=q.eq('trade',F.trade);if(F.zone){const zz=F.zone.replace(/[,()%]/g,' ').trim();q=q.or('zone.ilike.%'+zz+'%,zone.ilike.%Toda España%')}
-  const list=await enrich(((await q).data||[]).filter(p=>!seen.has(p.id)));list.forEach(p=>p.i=0);
+  let q=sb.from('profiles').select('*').eq('available',true).limit(200);
+  const ctr=(F.zone&&F.km)?await geocode(F.zone):null,zz=F.zone.replace(/[,()%]/g,' ').trim();
+  if(F.trade!=='Todos')q=q.eq('trade',F.trade);if(F.zone&&!ctr)q=q.or('zone.ilike.%'+zz+'%,zone.ilike.%Toda España%');
+  let raw=((await q).data||[]).filter(p=>!seen.has(p.id));
+  if(ctr)raw=raw.filter(p=>p.lat==null?(/toda espa/i.test(p.zone||'')||(p.zone||'').toLowerCase().includes(zz.toLowerCase())):kmDist(ctr,{lat:p.lat,lng:p.lng})<=F.km);
+  const list=await enrich(raw.slice(0,60));list.forEach(p=>p.i=0);
   const like=async(p,l,note)=>{if(l){const r=await sb.from('likes').insert({company_id:S.user.id,autonomo_id:p.id,job:note||''});if(r.error)say(r.error.message)}else(S.skipped=S.skipped||[]).push(p.id)};
   const res=$('#res');
   if(!list.length){res.innerHTML=`<div class="box or"><h3>No hay más perfiles ahora mismo</h3><p class="mu">Prueba otro oficio o quita la zona. Entran autónomos nuevos cada semana.</p></div>`;return}
+  if(F.view==='map'){
+    res.innerHTML='<div id="mp" style="height:430px;border-radius:16px;overflow:hidden;background:#222"></div><p class="mu" id="mpn" style="margin-top:8px"></p>';
+    try{await leafletLoad()}catch(e){res.innerHTML='<div class="box or"><p class="mu">No se pudo cargar el mapa. Prueba la lista.</p></div>';return}
+    const withLoc=list.filter(p=>p.lat!=null),mp=L.map('mp',{scrollWheelZoom:false}).setView(ctr?[ctr.lat,ctr.lng]:[40.4,-3.7],ctr?9:5);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OpenStreetMap'}).addTo(mp);
+    const pts=[];withLoc.forEach(p=>{const j=jit(p.id),ll=[p.lat+j[0],p.lng+j[1]];pts.push(ll);
+      L.circleMarker(ll,{radius:11,color:'#fff',weight:2,fillColor:'#f27a2c',fillOpacity:.95}).addTo(mp)
+       .bindPopup(`<b>${esc(p.name)}</b><br>${esc(p.trade)} · ${esc(p.zone)}<br><button data-mv="${list.indexOf(p)}" style="margin-top:6px">Ver perfil</button> <button data-ml="${list.indexOf(p)}" style="margin-top:6px">Me interesa</button>`)});
+    if(pts.length>1&&!ctr)mp.fitBounds(pts,{padding:[30,30],maxZoom:11});else if(pts.length===1&&!ctr)mp.setView(pts[0],11);
+    if(ctr)L.circle([ctr.lat,ctr.lng],{radius:F.km*1000,color:'#f27a2c',weight:1,fillOpacity:.06}).addTo(mp);
+    mp.on('popupopen',e=>{const el=e.popup.getElement();
+      el.querySelectorAll('[data-mv]').forEach(b=>b.onclick=()=>{const o=modal(`<div class="card">${cardIn(list[+b.dataset.mv],true)}</div><button class="g" id="x" style="margin-top:12px">Cerrar</button>`,'l');$('#x').onclick=()=>o.remove()});
+      el.querySelectorAll('[data-ml]').forEach(b=>b.onclick=async()=>{const p=list[+b.dataset.ml],n=await askNote(p);if(n===null)return;await like(p,true,n);buscar()})});
+    const sin=list.length-withLoc.length;$('#mpn').textContent=withLoc.length+' en el mapa'+(sin?' · '+sin+' sin ubicación exacta (míralos en Lista)':'')+'. La ubicación es aproximada, a nivel de municipio.';
+    return}
   if(F.view==='list'){
     res.innerHTML=list.map((p,i)=>`<div class="box"><div class="li">${thumb(p)}<div><b>${esc(p.name)}</b> <span class="tag">${esc(p.trade)}</span><br><span class="mu">${esc(p.zone)} · ${p.years||0} años · ${(p.photos||[]).length} fotos</span><br>${stars(p.avg)}</div></div><div class="row" style="margin-top:10px"><button class="g s" data-v="${i}">Ver perfil</button><button class="s" data-l="${i}">Me interesa</button></div></div>`).join('');
     res.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{const o=modal(`<div class="card">${cardIn(list[+b.dataset.v],true)}</div><button class="g" id="x" style="margin-top:12px">Cerrar</button>`,'l');$('#x').onclick=()=>o.remove()});
