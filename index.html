@@ -181,10 +181,12 @@ async function loadRole(quiet){
 }
 function landing(){
   history.replaceState(null,'',location.pathname);
+  setTimeout(async()=>{try{const el=$('#cnt0');if(!el)return;const {count}=await sb.from('profiles').select('id',{count:'exact',head:true});if(count>=5)el.innerHTML=`<p class="lead" style="text-align:center;font-weight:700">Ya hay ${count} autónomos con perfil</p>`}catch(e){}},0);
   app.innerHTML=hdr()+`
   <div class="hero up"><div><h1>Autónomos de obra, <em>sin intermediarios</em></h1></div>${CONE}</div>
   <div class="heroimg up">${HERO}</div>
   <p class="lead up">La web donde las empresas de construcción encuentran autónomos de confianza en toda España, y los autónomos consiguen trabajo enseñando lo que saben hacer.</p>
+  <div id="cnt0"></div>
   <div class="two r up">
     <div class="who"><h2>${ic('hammer',22)} Soy autónomo</h2><ul><li>Crea tu perfil con fotos de tus obras</li><li>Las empresas te encuentran y te avisan</li><li>Tu teléfono, solo si tú aceptas</li><li>Gratis, siempre</li></ul><button class="w" data-go="a">Crear mi perfil</button></div>
     <div class="who"><h2>${ic('building',22)} Soy empresa</h2><ul><li>Mira perfiles con fotos y valoraciones</li><li>Filtra por oficio y zona</li><li>Marca los que te interesan y llámalos</li><li>Empieza gratis</li></ul><button class="w" data-go="e">Buscar autónomos</button></div>
