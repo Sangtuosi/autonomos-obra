@@ -257,8 +257,13 @@ function go(tab){
 async function badge(){if(S.role!=='a')return;const {count}=await sb.from('likes').select('company_id',{count:'exact',head:true}).eq('autonomo_id',S.user.id).eq('status','pending');
   const b=app.querySelector('.tabs [data-k=avisos]');if(b&&count>0&&!b.querySelector('.bd'))b.insertAdjacentHTML('beforeend',`<span class="bd">${count>9?'9+':count}</span>`)}
 function settings(){
-  const o=modal(`<h2>Ajustes</h2><p>Sesión iniciada como ${esc(S.user.email||'')}</p><button class="g" id="cl">Volver</button><button class="no" id="lo" style="margin-top:14px">Cerrar sesión</button>`);
+  const o=modal(`<h2>Ajustes</h2><p>Sesión iniciada como ${esc(S.user.email||'')}</p><button class="g" id="cl">Volver</button><button class="no" id="lo" style="margin-top:14px">Cerrar sesión</button><button class="g" id="del" style="margin-top:14px;font-size:13px;opacity:.8">Eliminar mi cuenta</button><p style="font-size:12px;margin-top:10px"><a href="privacidad.html" target="_blank">Privacidad</a> · <a href="terminos.html" target="_blank">Condiciones</a></p>`);
   $('#cl').onclick=()=>o.remove();$('#lo').onclick=async()=>{o.remove();await sb.auth.signOut();S={user:null};landing()};
+  $('#del').onclick=()=>{o.remove();const d=modal(`<h2>¿Eliminar tu cuenta?</h2><p>Se borrarán tu perfil, tus fotos, tus contactos y tus opiniones. No se puede deshacer.</p><button class="g" id="dn">No, volver</button><button class="no" id="dy" style="margin-top:14px">Sí, eliminar todo</button>`);
+    $('#dn').onclick=()=>d.remove();
+    $('#dy').onclick=async()=>{$('#dy').disabled=true;const r=await sb.rpc('delete_my_account');
+      if(r.error){d.remove();return say('No se pudo eliminar: '+r.error.message+' (¿has ejecutado migracion-6.sql?)')}
+      d.remove();await sb.auth.signOut();S={user:null};landing();say('Tu cuenta se ha eliminado.')}};
 }
 async function getPhone(uid){const {data}=await sb.from('contacts').select('phone').eq('user_id',uid).maybeSingle();return data?.phone||''}
 function progress(items){const d=items.filter(i=>i[1]).length,p=Math.round(d/items.length*100);

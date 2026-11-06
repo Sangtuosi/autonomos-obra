@@ -113,3 +113,13 @@ create policy "creviews ver" on company_reviews for select to authenticated usin
 create policy "creviews crear" on company_reviews for insert to authenticated with check (
   autonomo_id = auth.uid() and exists (select 1 from likes l where l.company_id = company_reviews.company_id
     and l.autonomo_id = auth.uid() and l.status = 'accepted'));
+-- Pegar en Supabase > SQL Editor > Run (después de migracion-5.sql)
+-- Permite que cada usuario elimine su propia cuenta y todos sus datos
+create or replace function public.delete_my_account() returns void
+language plpgsql security definer set search_path = public, auth as $$
+begin
+  if auth.uid() is null then raise exception 'no autenticado'; end if;
+  delete from auth.users where id = auth.uid();
+end $$;
+revoke all on function public.delete_my_account() from public, anon;
+grant execute on function public.delete_my_account() to authenticated;
