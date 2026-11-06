@@ -203,6 +203,22 @@ function landing(){
   <small class="f">Obra Directa solo pone en contacto. La contratación y las condiciones son entre empresa y autónomo.</small>`;
   app.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>b.dataset.go==='in'?authView('in'):authView('up',b.dataset.go));
 }
+const GCID=(window.CFG&&CFG.GCID)||'';
+function gisLoad(){return new Promise((ok,no)=>{if(window.google&&google.accounts)return ok();const t=document.createElement('script');t.src='https://accounts.google.com/gsi/client';t.onload=ok;t.onerror=no;document.head.appendChild(t)})}
+async function gisButton(role){
+  const gg=$('#gg');if(!gg||!GCID)return;
+  try{await gisLoad();
+    const box=document.createElement('div');box.id='gis';box.style.cssText='display:flex;justify-content:center;margin:0 0 8px';
+    google.accounts.id.initialize({client_id:GCID,ux_mode:'popup',auto_select:false,callback:async resp=>{
+      try{localStorage.setItem('pendRole',role);localStorage.setItem('pendName',($('#nm')||{}).value||'')}catch(e){}
+      const r=await sb.auth.signInWithIdToken({provider:'google',token:resp.credential});
+      if(r.error)return say('No se pudo entrar con Google: '+r.error.message);
+      S.user=r.data.user;loadRole()}});
+    gg.parentNode.insertBefore(box,gg);
+    google.accounts.id.renderButton(box,{type:'standard',theme:'filled_black',size:'large',text:'continue_with',shape:'pill',locale:'es',width:Math.min(360,(gg.parentNode.clientWidth||320)-8)});
+    gg.style.display='none';
+  }catch(e){}
+}
 function authView(mode,role='a'){
   app.innerHTML=hdr()+`<div class="box"><button class="g s" id="bk" style="margin-bottom:8px">${ic('back',16)} Volver</button><h2>${mode==='in'?'Entrar':role==='a'?'Crea tu perfil de autónomo':'Crea tu cuenta de empresa'}</h2>
   ${mode==='up'?`<div class="row" style="margin-bottom:4px"><button class="${role==='a'?'':'g'}" id="ra">Autónomo</button><button class="${role==='e'?'':'g'}" id="re">Empresa</button></div><label>${role==='a'?'Tu nombre':'Nombre de la empresa'}</label><input id="nm" placeholder="${role==='a'?'Ej: Carlos Martínez':'Ej: Reformas Vallès S.L.'}">`:''}
@@ -218,6 +234,7 @@ function authView(mode,role='a'){
   $('#gg').onclick=async()=>{try{localStorage.setItem('pendRole',role);localStorage.setItem('pendName',($('#nm')||{}).value||'')}catch(e){}
     const r=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});
     if(r.error)say('Google todavía no está activado en esta web. Usa tu correo por ahora.')};
+  gisButton(role);
   $('#go').onclick=async()=>{
     const email=$('#em').value.trim(),password=$('#pw').value;
     if(!email||password.length<6)return say('Escribe tu correo y una contraseña de 6 o más caracteres.');
