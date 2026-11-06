@@ -184,7 +184,7 @@ function landing(){
   app.innerHTML=hdr()+`
   <div class="hero up"><div><h1>Autónomos de obra, <em>sin intermediarios</em></h1></div>${CONE}</div>
   <div class="heroimg up">${HERO}</div>
-  <p class="lead up">La web donde las empresas de construcción encuentran autónomos de confianza en el Vallès, y los autónomos consiguen trabajo enseñando lo que saben hacer.</p>
+  <p class="lead up">La web donde las empresas de construcción encuentran autónomos de confianza en toda España, y los autónomos consiguen trabajo enseñando lo que saben hacer.</p>
   <div class="two r up">
     <div class="who"><h2>${ic('hammer',22)} Soy autónomo</h2><ul><li>Crea tu perfil con fotos de tus obras</li><li>Las empresas te encuentran y te avisan</li><li>Tu teléfono, solo si tú aceptas</li><li>Gratis, siempre</li></ul><button class="w" data-go="a">Crear mi perfil</button></div>
     <div class="who"><h2>${ic('building',22)} Soy empresa</h2><ul><li>Mira perfiles con fotos y valoraciones</li><li>Filtra por oficio y zona</li><li>Marca los que te interesan y llámalos</li><li>Empieza gratis</li></ul><button class="w" data-go="e">Buscar autónomos</button></div>
@@ -219,7 +219,7 @@ async function gisButton(role){
     gg.style.display='none';
   }catch(e){}
 }
-document.body.insertAdjacentHTML('beforeend','<datalist id="zonas">'+'Sabadell,Terrassa,Rubí,Cerdanyola del Vallès,Sant Cugat del Vallès,Barberà del Vallès,Ripollet,Castellar del Vallès,Granollers,Mollet del Vallès,Parets del Vallès,Cardedeu,La Garriga,Montcada i Reixac,Badia del Vallès,Polinyà,Sentmenat,Vallès Occidental,Vallès Oriental,Barcelona'.split(',').map(z=>'<option>'+z+'</option>').join('')+'</datalist>');
+document.body.insertAdjacentHTML('beforeend','<datalist id="zonas">'+'Toda España,A Coruña,Álava,Albacete,Alicante,Almería,Asturias,Ávila,Badajoz,Baleares,Barcelona,Burgos,Cáceres,Cádiz,Cantabria,Castellón,Ciudad Real,Córdoba,Cuenca,Girona,Granada,Guadalajara,Guipúzcoa,Huelva,Huesca,Jaén,La Rioja,Las Palmas,León,Lleida,Lugo,Madrid,Málaga,Murcia,Navarra,Ourense,Palencia,Pontevedra,Salamanca,Santa Cruz de Tenerife,Segovia,Sevilla,Soria,Tarragona,Teruel,Toledo,Valencia,Valladolid,Vizcaya,Zamora,Zaragoza,Ceuta,Melilla,Sabadell,Terrassa,Vallès Occidental,Vallès Oriental,Rubí,Cerdanyola del Vallès,Sant Cugat del Vallès,Granollers,Mollet del Vallès'.split(',').map(z=>'<option>'+z+'</option>').join('')+'</datalist>');
 function authView(mode,role='a'){
   app.innerHTML=hdr()+`<div class="box"><button class="g s" id="bk" style="margin-bottom:8px">${ic('back',16)} Volver</button><h2>${mode==='in'?'Entrar':role==='a'?'Crea tu perfil de autónomo':'Crea tu cuenta de empresa'}</h2>
   ${mode==='up'?`<div class="row" style="margin-bottom:4px"><button class="${role==='a'?'':'g'}" id="ra">Autónomo</button><button class="${role==='e'?'':'g'}" id="re">Empresa</button></div><label>${role==='a'?'Tu nombre':'Nombre de la empresa'}</label><input id="nm" placeholder="${role==='a'?'Ej: Carlos Martínez':'Ej: Reformas Vallès S.L.'}">`:''}
@@ -334,7 +334,7 @@ async function perfil(){
   <div class="box"><h2>1. Quién eres</h2>
    <label>Nombre</label><input id="n" value="${esc(p.name)}" placeholder="Ej: Carlos Martínez">
    <label>Tu oficio principal</label><div id="tr">${chips(TRADES,[p.trade])}</div>
-   <div class="row"><div><label>Años de experiencia</label><input id="y" type="number" min="0" max="60" value="${p.years||0}"></div><div><label>Zona de trabajo</label><input id="z" list="zonas" value="${esc(p.zone)}" placeholder="Ej: Sabadell, Terrassa"></div></div></div>
+   <div class="row"><div><label>Años de experiencia</label><input id="y" type="number" min="0" max="60" value="${p.years||0}"></div><div><label>Zona de trabajo</label><input id="z" list="zonas" value="${esc(p.zone)}" placeholder="Ej: Valencia, Sabadell, Zaragoza"></div></div></div>
   <div class="box"><h2>2. Qué sabes hacer</h2><p class="mu">Marca todo lo que haces.</p><div id="sk" style="margin-top:8px"></div>
    <label>¿Algo que no esté en la lista? Escríbelo</label><textarea id="sx" rows="2" maxlength="200" placeholder="Ej: Restauración de casas antiguas, trabajos en altura, lectura de planos...">${esc(p.skills_extra||'')}</textarea></div>
   <div class="box"><h2>3. Cómo trabajas</h2>
@@ -346,7 +346,7 @@ async function perfil(){
    <label>Herramienta</label><div id="tl">${chips(['Propia completa','Parcial','No tengo'],[p.tools||''])}</div>
    <label>Tu tarifa orientativa</label><input id="r" value="${esc(p.rate||'')}" placeholder="Ej: 18 €/hora o 150 € al día"><p class="mu" style="margin-top:4px">Si lo dejas vacío, la empresa verá "A convenir".</p>
    <label>Estoy disponible ahora</label>${yn('av',p.available)}
-   <label>¿Algo más que quieras decir de cómo trabajas?</label><textarea id="wn" rows="2" maxlength="250" placeholder="Ej: Me muevo por todo el Vallès. Puedo empezar el lunes. Trabajo solo o con un compañero.">${esc(p.work_notes||'')}</textarea></div>
+   <label>¿Algo más que quieras decir de cómo trabajas?</label><textarea id="wn" rows="2" maxlength="250" placeholder="Ej: Me muevo por toda mi provincia. Puedo empezar el lunes. Trabajo solo o con un compañero.">${esc(p.work_notes||'')}</textarea></div>
   <div class="box"><h2>4. Preséntate</h2><textarea id="b" rows="4" maxlength="400" placeholder="Ej: 15 años en reformas de baños y cocinas. Trabajo limpio y puntual. Me incorporo en 48 horas.">${esc(p.bio)}</textarea></div>
   <div class="box"><h2>5. Fotos de tus trabajos</h2><p class="mu">Es lo que más mira la empresa. Sube al menos 3 de obras terminadas.</p><div class="thumbs" id="th" style="margin-top:10px"></div><input id="f" type="file" accept="image/*" multiple hidden></div>
   <div class="box"><h2>6. Contacto</h2><label>Teléfono (solo lo ve quien tú aceptes)</label><input id="ph" type="tel" value="${esc(S.phone)}" placeholder="Ej: 600 123 456"></div>
@@ -364,7 +364,7 @@ async function perfil(){
       const url=sb.storage.from('fotos').getPublicUrl(path).data.publicUrl;const ph=[...(S.me.photos||[]),url];
       await sb.from('profiles').update({photos:ph}).eq('id',S.user.id);S.me.photos=ph;draw();$('#pg').innerHTML=progA()}e.target.value=''};
   $('#sv').onclick=async()=>{
-    const row={name:$('#n').value.trim()||'Autónomo',trade:picked($('#tr'))[0]||'Albañil',zone:$('#z').value.trim()||'Vallès',years:+$('#y').value||0,bio:$('#b').value.trim(),skills:picked($('#sk')),skills_extra:$('#sx').value.trim(),rate:$('#r').value.trim(),registered:isY('rg'),insured:isY('ins'),tpc:isY('tpc'),prl:isY('prl'),vehicle:picked($('#vh'))[0]||'',tools:picked($('#tl'))[0]||'',work_notes:$('#wn').value.trim(),available:isY('av')};
+    const row={name:$('#n').value.trim()||'Autónomo',trade:picked($('#tr'))[0]||'Albañil',zone:$('#z').value.trim()||'Toda España',years:+$('#y').value||0,bio:$('#b').value.trim(),skills:picked($('#sk')),skills_extra:$('#sx').value.trim(),rate:$('#r').value.trim(),registered:isY('rg'),insured:isY('ins'),tpc:isY('tpc'),prl:isY('prl'),vehicle:picked($('#vh'))[0]||'',tools:picked($('#tl'))[0]||'',work_notes:$('#wn').value.trim(),available:isY('av')};
     const a=await sb.from('profiles').update(row).eq('id',S.user.id);const tel=$('#ph').value.trim();
     const b=tel?await sb.from('contacts').upsert({user_id:S.user.id,phone:tel}):{};
     if(a.error||b.error)return say((a.error||b.error).message+' (¿has ejecutado migracion-3.sql?)');
@@ -378,7 +378,7 @@ async function empresa(){
   $('#v').innerHTML=`<div id="pg">${progE()}</div>
   <div class="box"><h2>1. Tu empresa</h2><div class="li"><div id="lgp">${logo(c,72)}</div><div><button class="g s" id="lgb">Subir logo</button><p class="mu">Se verá en tu perfil y en los avisos.</p></div></div><input id="lg" type="file" accept="image/*" hidden><label>Nombre</label><input id="n" value="${esc(c.name)}" placeholder="Ej: Reformas Vallès S.L.">
    <label>Tipo de empresa</label><select id="k">${opts(KINDS,c.kind)}</select>
-   <label>Zona donde trabajáis</label><input id="z" list="zonas" value="${esc(c.zone||'Vallès')}" placeholder="Ej: Vallès Occidental"></div>
+   <label>Zona donde trabajáis</label><input id="z" list="zonas" value="${esc(c.zone||'')}" placeholder="Ej: Barcelona, Madrid, Sevilla"></div>
   <div class="box"><h2>2. Sobre vosotros</h2><textarea id="ab" rows="3" maxlength="300" placeholder="Ej: 20 años en el sector. 12 trabajadores. Siempre pagamos a tiempo.">${esc(c.about)}</textarea></div>
   <div class="box"><h2>3. Confianza y contacto</h2><label>Número de REA (Registro de Empresas Acreditadas)</label><input id="r" value="${esc(c.rea)}" placeholder="Ej: 08/12345678">
    <label>Teléfono (solo lo ven los autónomos que acepten)</label><input id="ph" type="tel" value="${esc(S.phone)}" placeholder="Ej: 93 123 45 67"></div>
@@ -389,7 +389,7 @@ async function empresa(){
     const up=await sb.storage.from('fotos').upload(path,blob,{contentType:'image/jpeg'});if(up.error)return say(up.error.message);
     const url=sb.storage.from('fotos').getPublicUrl(path).data.publicUrl;const r=await sb.from('companies').update({logo:url}).eq('id',S.user.id);
     if(r.error)return say(r.error.message+' (¿has ejecutado migracion-4.sql?)');S.me.logo=url;$('#lgp').innerHTML=logo(S.me,72);$('#pg').innerHTML=progE();say('Logo subido.')};
-  $('#sv').onclick=async()=>{const row={name:$('#n').value.trim()||'Mi empresa',kind:$('#k').value,zone:$('#z').value.trim()||'Vallès',about:$('#ab').value.trim(),rea:$('#r').value.trim()};
+  $('#sv').onclick=async()=>{const row={name:$('#n').value.trim()||'Mi empresa',kind:$('#k').value,zone:$('#z').value.trim()||'Toda España',about:$('#ab').value.trim(),rea:$('#r').value.trim()};
     const a=await sb.from('companies').update(row).eq('id',S.user.id);const tel=$('#ph').value.trim();
     const b=tel?await sb.from('contacts').upsert({user_id:S.user.id,phone:tel}):{};
     if(a.error||b.error)return say((a.error||b.error).message+' (¿has ejecutado migracion-4.sql?)');
@@ -442,13 +442,13 @@ async function companeros(){
 function askNote(p){return new Promise(res=>{const o=modal(`<h2>Me interesa ${esc((p.name||'').split(' ')[0])}</h2><p>Si quieres, añade una nota corta para que sepa de qué se trata.</p><textarea id="nt" rows="3" maxlength="200" placeholder="Ej: Reforma de baño en Sabadell. Empezamos el día 15."></textarea><button id="n1" style="margin-top:12px">Enviar</button><button class="g" id="n2">Enviar sin nota</button><button class="g" id="n3">Cancelar</button>`);
   o.onclick=e=>{if(e.target===o){o.remove();res(null)}};$('#n1').onclick=()=>{const v=$('#nt').value.trim();o.remove();res(v)};$('#n2').onclick=()=>{o.remove();res('')};$('#n3').onclick=()=>{o.remove();res(null)}})}
 async function buscar(){
-  $('#v').innerHTML=`<div id="ft">${chips(['Todos',...TRADES],[F.trade])}</div><div class="row" style="margin:10px 0"><input id="fz" list="zonas" placeholder="Zona (ej: Sabadell)" value="${esc(F.zone)}"><div id="vw">${chips(['Tarjetas','Lista'],[F.view==='cards'?'Tarjetas':'Lista'])}</div></div><div id="res"></div>`;
+  $('#v').innerHTML=`<div id="ft">${chips(['Todos',...TRADES],[F.trade])}</div><div class="row" style="margin:10px 0"><input id="fz" list="zonas" placeholder="Zona (ej: Sevilla)" value="${esc(F.zone)}"><div id="vw">${chips(['Tarjetas','Lista'],[F.view==='cards'?'Tarjetas':'Lista'])}</div></div><div id="res"></div>`;
   bindChips($('#ft'),true,()=>{F.trade=picked($('#ft'))[0]||'Todos';buscar()});bindChips($('#vw'),true,()=>{F.view=picked($('#vw'))[0]==='Lista'?'list':'cards';buscar()});
   $('#fz').onchange=e=>{F.zone=e.target.value.trim();buscar()};
   const mine=(await sb.from('likes').select('autonomo_id').eq('company_id',S.user.id)).data||[];
   const seen=new Set([...mine.map(m=>m.autonomo_id),...(S.skipped||[])]);
   let q=sb.from('profiles').select('*').eq('available',true).limit(60);
-  if(F.trade!=='Todos')q=q.eq('trade',F.trade);if(F.zone)q=q.ilike('zone','%'+F.zone+'%');
+  if(F.trade!=='Todos')q=q.eq('trade',F.trade);if(F.zone){const zz=F.zone.replace(/[,()%]/g,' ').trim();q=q.or('zone.ilike.%'+zz+'%,zone.ilike.%Toda España%')}
   const list=await enrich(((await q).data||[]).filter(p=>!seen.has(p.id)));list.forEach(p=>p.i=0);
   const like=async(p,l,note)=>{if(l){const r=await sb.from('likes').insert({company_id:S.user.id,autonomo_id:p.id,job:note||''});if(r.error)say(r.error.message)}else(S.skipped=S.skipped||[]).push(p.id)};
   const res=$('#res');
